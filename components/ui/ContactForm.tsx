@@ -84,7 +84,7 @@ export default function ContactForm() {
         />
       </div>
       
-      <Button type="submit" className="w-full">
+      <Button  className="w-full">
         Envoyer
       </Button>
     </form>
