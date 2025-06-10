@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #2563eb;
+  --secondary: #1e40af;
+  --accent: #3b82f6;
+}
+
+@layer base {
+  body {
+    @apply text-gray-900 bg-white;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section {
+    @apply py-16 sm:py-24;
+  }
+  
+  .heading {
+    @apply text-4xl font-bold text-gray-900 mb-8;
+  }
+  
+  .subheading {
+    @apply text-xl text-gray-600 mb-12;
+  }
+}
