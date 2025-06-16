@@ -48,7 +48,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Téléphone</h4>
-                  <p className="text-gray-600">+33 1 23 45 67 89</p>
+                  <p className="text-gray-600">+229 01 94 50 78 44/01 67 54 28 52</p>
                   <p className="text-sm text-gray-500">Lun-Ven 9h-18h</p>
                 </div>
               </div>
@@ -59,7 +59,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
-                  <p className="text-gray-600">contact@aurapro.fr</p>
+                  <p className="text-gray-600">businesscompany@gmail.com</p>
                   <p className="text-sm text-gray-500">Réponse sous 24h</p>
                 </div>
               </div>
@@ -70,8 +70,8 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">Adresse</h4>
-                  <p className="text-gray-600">123 Avenue des Champs-Élysées</p>
-                  <p className="text-gray-600">75008 Paris, France</p>
+                  <p className="text-gray-600">Godomey</p>
+                  <p className="text-gray-600">Agbocodji</p>
                 </div>
               </div>
             </div>

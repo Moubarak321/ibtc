@@ -12,8 +12,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-              AuraPro
+            <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 w-20 h-20">
+              <img src="/images/Logo_btic 2.png" alt="Logo"  />
             </div>
             <p className="text-gray-300 mb-6">
               Votre partenaire multi-services pour transformer vos idées en succès concrets.
@@ -63,15 +63,15 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-300">123 Avenue des Champs-Élysées, 75008 Paris</span>
+                <span className="text-gray-300">Godomey,Agbocodji</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-300">+33 1 23 45 67 89</span>
+                <span className="text-gray-300">+229 01 94 50 78 44/01 67 54 28 62</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-300">contact@aurapro.fr</span>
+                <span className="text-gray-300">businesscompanyha@gmail.com</span>
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {currentYear} AuraPro. Tous droits réservés.
+              © {currentYear} BTIC. Tous droits réservés.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">

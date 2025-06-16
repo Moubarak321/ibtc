@@ -7,30 +7,34 @@ const ServicesSection = () => {
       icon: BarChart3,
       title: "Analyse des Affaires",
       description: "Stratégies personnalisées pour optimiser vos performances et accélérer votre croissance.",
-      features: ["Audit complet", "Stratégie digitale", "Optimisation des processus"]
+      features: ["Audit complet", "Stratégie digitale", "Optimisation des processus"],
+      slug : "/services/analyse-des-affaires"
     },
     {
       icon: Building2,
       title: "BTP & Construction",
       description: "Solutions complètes pour vos projets de construction et travaux publics.",
-      features: ["Gestion de projet", "Études techniques", "Suivi de chantier"]
+      features: ["Gestion de projet", "Études techniques", "Suivi de chantier"],
+      slug : "/services/btp"
     },
     {
       icon: ShoppingBag,
       title: "Commerce Général",
       description: "Développement commercial et solutions e-commerce pour votre entreprise.",
-      features: ["E-commerce", "Marketing digital", "Gestion des ventes"]
+      features: ["E-commerce", "Marketing digital", "Gestion des ventes"],
+      slug : "/services/commerce-general"
     },
     {
       icon: MapPin,
       title: "Tourisme",
       description: "Services touristiques innovants pour valoriser votre destination.",
-      features: ["Promotion touristique", "Événementiel", "Hébergement"]
+      features: ["Promotion touristique", "Événementiel", "Hébergement"],
+      slug : "/services/tourisme"
     }
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="servicesSection" className="py-20 bg-gray-50 ">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -64,10 +68,15 @@ const ServicesSection = () => {
               </ul>
               
               <button className="mt-6 text-blue-600 font-semibold hover:text-purple-600 transition-colors">
-                En savoir plus →
+               
+                <a href={service.slug} className="mt-6 text-blue-600 font-semibold hover:text-purple-600 transition-colors">
+                 En savoir plus →
+                </a>
               </button>
             </div>
-          ))}
+          )
+          
+          )}
         </div>
       </div>
     </section>

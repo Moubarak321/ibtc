@@ -54,8 +54,8 @@ const Header = () => {
     }`}>
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            AuraPro
+          <div className="text-2 font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent w-20 h-20">
+                <img src="/images/Logo_btic 1.png" alt="Logo"  />
           </div>
           
           {/* Desktop Menu */}

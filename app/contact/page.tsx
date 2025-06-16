@@ -19,15 +19,15 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold">Adresse</h3>
-                  <p className="text-gray-600">123 Rue Principale, 75000 Paris</p>
+                  <p className="text-gray-600">Godomey,Agbocodji</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Téléphone</h3>
-                  <p className="text-gray-600">+33 1 23 45 67 89</p>
+                  <p className="text-gray-600">+229 01 94 50 78 44/01 67 54 28 62</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <p className="text-gray-600">contact@entreprise.com</p>
+                  <p className="text-gray-600">businesscompanyha@gmail.com</p>
                 </div>
               </div>
             </div>
