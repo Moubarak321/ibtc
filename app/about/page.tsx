@@ -163,7 +163,6 @@ const AboutPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
     
 
       {/* Hero Section */}

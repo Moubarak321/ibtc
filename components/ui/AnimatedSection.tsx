@@ -5,7 +5,11 @@ import { fadeIn } from '@/lib/animations';
 interface AnimatedSectionProps {
   children: React.ReactNode
   className?: string
+  id?: string
+
 }
+
+
 
 export default function AnimatedSection({ children, className = '' }: AnimatedSectionProps) {
   const [ref, inView] = useInView({
