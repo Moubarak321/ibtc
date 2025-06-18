@@ -57,7 +57,6 @@ const HeroSection = () => {
         duration: 0.8
       }
     })
-    
   };
 
   return (

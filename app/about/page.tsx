@@ -12,7 +12,7 @@ import Link from 'next/link';
 const AboutPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentPartner, setCurrentPartner] = useState(0);
-  const [activeTab, setActiveTab] = useState('mission');
+  const [activeTab, setActiveTab] = useState('vision');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -202,13 +202,15 @@ const AboutPage = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 ">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Notre <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Histoire</span>
               </h2>
-             
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 w-30 h-15">
-              <img src="/images/Logo_btic 2.png" alt="Logo"  />
-            </div>
+              <p className="text-lg text-gray-600 mb-6">
+                Fondée en 2014, MultiServices Pro est née d'une vision audacieuse : devenir le partenaire de référence pour les entreprises cherchant des solutions complètes et innovantes dans plusieurs secteurs d'activité.
+              </p>
+              <p className="text-lg text-gray-600 mb-8">
+                Au fil des années, nous avons développé une expertise reconnue dans l'analyse des affaires, le BTP, le commerce général et le tourisme, permettant à nos clients de bénéficier d'un accompagnement global et personnalisé.
+              </p>
               <div className="grid grid-cols-2 gap-6">
                 {achievements.map((achievement, index) => (
                   <div key={index} className="text-center p-4 rounded-xl bg-gray-50 hover:shadow-lg transition-all">
@@ -221,11 +223,7 @@ const AboutPage = () => {
             </div>
             <div className="relative">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8">
-                <img 
-                  src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop" 
-                  alt="Notre équipe"
-                  className="w-full h-64 object-cover rounded-xl mb-6"
-                />
+                 <img src="/images/Logo_btic 2.png" alt="Logo"  />
                 <blockquote className="text-gray-700 italic text-center">
                   "L'excellence n'est pas un acte, mais une habitude. Nous nous efforçons chaque jour de dépasser les attentes de nos clients."
                 </blockquote>
