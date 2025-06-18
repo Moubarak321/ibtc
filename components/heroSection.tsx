@@ -57,6 +57,7 @@ const HeroSection = () => {
         duration: 0.8
       }
     })
+    
   };
 
   return (
@@ -147,7 +148,7 @@ const HeroSection = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Découvrir nos services
+              Boutique
               <motion.div
                 whileHover={{ x: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -179,7 +180,7 @@ const HeroSection = () => {
           >
             {[
               { value: "500+", label: "Projets Réalisés", color: "text-blue-400" },
-              { value: "15+", label: "Années d'Expérience", color: "text-purple-400" },
+              { value: "11+", label: "Années d'Expérience", color: "text-purple-400" },
               { value: "98%", label: "Clients Satisfaits", color: "text-blue-400" },
               { value: "24/7", label: "Support Client", color: "text-purple-400" }
             ].map((stat, i) => (

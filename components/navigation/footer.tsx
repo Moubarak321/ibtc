@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 w-20 h-20">
+            <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 w-20 h-15">
               <img src="/images/Logo_btic 2.png" alt="Logo"  />
             </div>
             <p className="text-gray-300 mb-6">
@@ -62,15 +62,15 @@ const Footer = () => {
             <h3 className="text-xl font-semibold mb-6">Contact</h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <MapPin className="h-5 w-5 text-blue-400" />
+                <MapPin className="h-10 w-10 text-blue-400" />
                 <span className="text-gray-300">Godomey,Agbocodji</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-blue-400" />
-                <span className="text-gray-300">+229 01 94 50 78 44/01 67 54 28 62</span>
+                <Phone className="h-10 w-10 text-blue-400" />
+                <span className="text-gray-300 ">+229 01 94 50 78 44/01 67 54 28 62  /  +33 751 567 086</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-blue-400" />
+                <Mail className="h-10 w-10 text-blue-400" />
                 <span className="text-gray-300">businesscompanyha@gmail.com</span>
               </div>
             </div>
@@ -78,22 +78,12 @@ const Footer = () => {
         </div>
         
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
+        <div className="border-t border-gray-800 mt-12 pt-8 ">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
-              © {currentYear} BTIC. Tous droits réservés.
+            <p className="text-gray-400 text-sm container mx-auto text-center">
+              © {currentYear} International Business and Tourisme Company. Tous droits réservés.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                Politique de confidentialité
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                Conditions d'utilisation
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                Mentions légales
-              </a>
-            </div>
+           
           </div>
         </div>
       </div>

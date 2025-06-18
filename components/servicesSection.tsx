@@ -2,37 +2,39 @@ import React from 'react';
 import { BarChart3, Building2, ShoppingBag, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedSection from '@/components/ui/AnimatedSection';
-
+import Link from 'next/link';
 const ServicesSection = () => {
   const services = [
     {
       icon: BarChart3,
       title: "Analyse des Affaires",
       description: "Stratégies personnalisées pour optimiser vos performances et accélérer votre croissance.",
-      features: ["Audit complet", "Stratégie digitale", "Optimisation des processus"],
+      
+      features: ["Representation commerciale", "Négoce international et distribution", "Etude de marché", "Comparatif de prix", "Divers services & prestations"],
       slug: "/services/analyse-des-affaires"
-    },
-    {
-      icon: Building2,
-      title: "BTP & Construction",
-      description: "Solutions complètes pour vos projets de construction et travaux publics.",
-      features: ["Gestion de projet", "Études techniques", "Suivi de chantier"],
-      slug: "/services/btp"
-    },
-    {
-      icon: ShoppingBag,
-      title: "Commerce Général",
-      description: "Développement commercial et solutions e-commerce pour votre entreprise.",
-      features: ["E-commerce", "Marketing digital", "Gestion des ventes"],
-      slug: "/services/commerce-general"
     },
     {
       icon: MapPin,
       title: "Tourisme",
       description: "Services touristiques innovants pour valoriser votre destination.",
-      features: ["Promotion touristique", "Événementiel", "Hébergement"],
+      features: ["Promotion touristique", "Événementiel", "Hébergement","Package Touristique"],
       slug: "/services/tourisme"
-    }
+    },
+    {
+      icon: Building2,
+      title: "BTP",
+      description: "Solutions complètes pour vos projets de construction et travaux publics.",
+      features: ["Vente de matériaux de construction et quincaillerie", "Gestion immobilière"],
+      slug: "/services/btp"
+    },
+    {
+      icon: ShoppingBag,
+      title: "Marketplace",
+      description: "Développement commercial et solutions e-commerce pour votre entreprise.",
+      features: ["E-commerce", "Marketing digital", "Gestion des ventes"],
+      slug: "/services/commerce-general"
+    },
+    
   ];
 
   const container = {
@@ -123,11 +125,16 @@ const ServicesSection = () => {
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">{service.title}</h3>
                   <p className="text-gray-600 mb-6">{service.description}</p>
                   
-                  <ul className="space-y-2">
+                  <ul className="space-y-2 ">
+                    
                     {service.features.map((feature, featureIndex) => (
+                      
+                      <motion.a
+                    
+                       href={service.slug}>
                       <motion.li 
                         key={featureIndex} 
-                        className="flex items-center text-sm text-gray-500"
+                        className="flex items-center text-sm text-gray-500 transition-colors cursor-pointer"
                         initial={{ x: -10, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.1 * featureIndex, duration: 0.3 }}
@@ -136,6 +143,7 @@ const ServicesSection = () => {
                         <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                         {feature}
                       </motion.li>
+                      </motion.a>
                     ))}
                   </ul>
                   

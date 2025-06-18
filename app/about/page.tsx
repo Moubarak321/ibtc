@@ -7,6 +7,7 @@ import {
   Shield, Zap, Handshake, Trophy, Play, ArrowDown, UserCheck,
   ChevronLeft, ChevronRight, Clock, MessageSquare
 } from 'lucide-react';
+import Link from 'next/link';
 
 const AboutPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -201,15 +202,13 @@ const AboutPage = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 ">
                 Notre <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Histoire</span>
               </h2>
-              <p className="text-lg text-gray-600 mb-6">
-                Fondée en 2014, MultiServices Pro est née d'une vision audacieuse : devenir le partenaire de référence pour les entreprises cherchant des solutions complètes et innovantes dans plusieurs secteurs d'activité.
-              </p>
-              <p className="text-lg text-gray-600 mb-8">
-                Au fil des années, nous avons développé une expertise reconnue dans l'analyse des affaires, le BTP, le commerce général et le tourisme, permettant à nos clients de bénéficier d'un accompagnement global et personnalisé.
-              </p>
+             
+              <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 w-30 h-15">
+              <img src="/images/Logo_btic 2.png" alt="Logo"  />
+            </div>
               <div className="grid grid-cols-2 gap-6">
                 {achievements.map((achievement, index) => (
                   <div key={index} className="text-center p-4 rounded-xl bg-gray-50 hover:shadow-lg transition-all">
@@ -249,14 +248,15 @@ const AboutPage = () => {
           <div className="flex justify-center mb-12">
             <div className="bg-white rounded-full p-2 shadow-lg">
               {[
-                { id: 'mission', label: 'Mission', icon: Target },
-                { id: 'vision', label: 'Vision', icon: Eye },
+                { id: 'vision', label: 'Vision', icon:Eye},
+                { id: 'mission', label: 'Mission', icon:Target},
                 { id: 'values', label: 'Valeurs', icon: Heart }
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3 rounded-full font-semibold transition-all flex items-center space-x-2 ${
+                  className={`px-6 py-3 rounded-full font-semibold transition-all flex items-center space-x-2 
+                    ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
                       : 'text-gray-600 hover:text-blue-600'
@@ -679,9 +679,12 @@ const AboutPage = () => {
             Découvrez comment nous pouvons transformer vos projets en succès
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+            href="/#servicesSection">
             <button className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
               Découvrir Nos Services
             </button>
+            </Link>
             <button className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-blue-600 transition-all duration-300">
               <Phone className="w-5 h-5 inline mr-2" />
               Nous Contacter

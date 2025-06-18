@@ -10,12 +10,12 @@ export default function CommerceGeneralPage() {
   const services = [
     {
       icon: FaStore,
-      title: "Distribution Multi-Secteurs",
+      title: "Matériels informatique/Bureautique",
       description: "Réseau de distribution étendu pour tous types de produits"
     },
     {
       icon: FaTruck,
-      title: "Logistique Intégrée",
+      title: "Lubrifiants/Engins lourds & Pièces de rechange",
       description: "Solutions complètes de stockage et transport"
     },
     {
@@ -75,11 +75,11 @@ export default function CommerceGeneralPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button href="#contact" variant="white" className="text-lg px-8 py-4">
-                Devenir Partenaire
+                Boutique
                 <FaArrowRight className="ml-2" />
               </Button>
               <Button href="#services" className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30">
-                Découvrir nos Secteurs
+                Contactez-nous
               </Button>
             </div>
           </motion.div>
@@ -267,14 +267,14 @@ export default function CommerceGeneralPage() {
                   href="/contact"
                   className="inline-flex items-center bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-200 text-lg"
                 >
-                  Devenir Partenaire
+                 Boutique
                   <FaArrowRight className="ml-2" />
                 </Link>
                 <a
                   href="mailto:commerce@entreprise.com"
                   className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 text-lg border border-white/30"
                 >
-                  Catalogue Produits
+                  Contactez-nous
                 </a>
               </div>
               

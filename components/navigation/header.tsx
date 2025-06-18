@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Menu, X, Building2, TrendingUp, ShoppingCart, MapPin, Star, ArrowRight, Phone, Mail, CheckCircle, Users, Award, Globe } from 'lucide-react';
+import { ChevronDown, Menu, X,Store,Building2, TrendingUp, ShoppingCart, MapPin, Star, ArrowRight, Phone, Mail, CheckCircle, Users, Award, Globe } from 'lucide-react';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,7 +31,7 @@ const Header = () => {
     },
     {
       title: "Commerce Général",
-      icon: ShoppingCart,
+      icon: Store,
       description: "Solutions commerciales complètes pour développer votre activité",
       color: "from-green-500 to-emerald-500",
       slug: "/services/commerce-general"
@@ -39,6 +39,13 @@ const Header = () => {
     {
       title: "Tourisme",
       icon: MapPin,
+      description: "Services touristiques innovants pour des expériences mémorables",
+      color: "from-indigo-500 to-purple-500",
+      slug: "/services/tourisme"
+    },
+    {
+      title: "Boutique",
+      icon: ShoppingCart,
       description: "Services touristiques innovants pour des expériences mémorables",
       color: "from-indigo-500 to-purple-500",
       slug: "/services/tourisme"
@@ -93,7 +100,7 @@ const Header = () => {
             </a>
 
             <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
-              Devis Gratuit
+              Boutique
             </button>
           </div>
 
@@ -139,7 +146,7 @@ const Header = () => {
                 Contact
               </a>
               <button className="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 text-sm">
-                Devis Gratuit
+                Boutique
               </button>
             </div>
           </div>

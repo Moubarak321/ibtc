@@ -63,7 +63,7 @@ const AboutSection = () => {
               </h2>
               
               <motion.p variants={item} className="text-lg text-gray-600 mb-6">
-                Depuis plus de 15 ans, AuraPro accompagne les entreprises dans leur développement 
+                Depuis plus de 11 ans, BTIC accompagne les entreprises dans leur développement 
                 grâce à une expertise multi-sectorielle unique. Notre équipe passionnée transforme 
                 vos défis en opportunités de croissance.
               </motion.p>
@@ -82,7 +82,7 @@ const AboutSection = () => {
                 className="flex flex-wrap gap-4"
               >
                 <motion.div variants={item} className="bg-blue-50 px-4 py-2 rounded-full">
-                  <span className="text-blue-600 font-semibold">15+ années d'expérience</span>
+                  <span className="text-blue-600 font-semibold">11+ années d'expérience</span>
                 </motion.div>
                 <motion.div variants={item} className="bg-purple-50 px-4 py-2 rounded-full">
                   <span className="text-purple-600 font-semibold">500+ projets réalisés</span>

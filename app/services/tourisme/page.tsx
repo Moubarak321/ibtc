@@ -9,22 +9,22 @@ export default function TourismePage() {
   const services = [
     {
       icon: FaPlane,
-      title: "Voyages Organisés",
+      title: "Promotion touristique",
       description: "Circuits personnalisés et voyages de groupe sur mesure"
     },
     {
       icon: FaHotel,
-      title: "Hébergement Premium",
+      title: "Evènementiel",
       description: "Sélection d'hôtels et résidences de standing"
     },
     {
       icon: FaMap,
-      title: "Guides Experts",
+      title: "Hébergement",
       description: "Accompagnement par des guides locaux certifiés"
     },
     {
       icon: FaCamera,
-      title: "Expériences Uniques",
+      title: "Package Touristique",
       description: "Activités exclusives et découvertes authentiques"
     }
   ]

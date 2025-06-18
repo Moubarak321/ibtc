@@ -9,23 +9,33 @@ export default function AnalyseDesAffairesPage() {
   const features = [
     {
       icon: FaChartLine,
-      title: "Analyse de Performance",
-      description: "Évaluation complète de vos indicateurs clés de performance"
+      title: "Représentation commerciale",
+      description: "Évaluation complète de vos indicateurs clés de performance",
+      slug: "/representation"
     },
     {
       icon: FaUsers,
-      title: "Audit Organisationnel",
-      description: "Optimisation de vos processus et structures internes"
+      title: "Négoce international & distribution",
+      description: "Optimisation de vos processus et structures internes",
+      slug: "/negoce"
     },
     {
       icon: FaCog,
-      title: "Transformation Digitale",
-      description: "Accompagnement dans votre transition numérique"
+      title: "Etude de marché",
+      description: "Accompagnement dans votre transition numérique",
+      slug: "/etude"
     },
     {
       icon: FaLightbulb,
-      title: "Stratégie d'Innovation",
-      description: "Développement de nouvelles opportunités business"
+      title: "Comparatif de prix",
+      description: "Développement de nouvelles opportunités business",
+      slug: "/comparatif"
+    },
+    {
+      icon: FaLightbulb,
+      title: "Divers services & prestations",
+      description: "Développement de nouvelles opportunités business",
+      slug: "/prestation",
     }
   ]
 
@@ -46,7 +56,7 @@ export default function AnalyseDesAffairesPage() {
           <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
         </div>
-        
+
         <div className="container relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -86,23 +96,25 @@ export default function AnalyseDesAffairesPage() {
               Une approche complète pour optimiser votre performance business
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
-              >
-                <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
-                  <feature.icon className="text-2xl text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
+              <Link href={feature.slug} key={index} className="group">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="cursor-pointer bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                >
+                  <div className="bg-gradient-to-br from-blue-500 to-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                    <feature.icon className="text-2xl text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </motion.div>
+              </Link>
+
             ))}
           </div>
         </div>
@@ -117,10 +129,10 @@ export default function AnalyseDesAffairesPage() {
                 Pourquoi Choisir Notre <span className="text-blue-600">Expertise</span> ?
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                Nos consultants expérimentés vous accompagnent dans l'optimisation 
+                Nos consultants expérimentés vous accompagnent dans l'optimisation
                 de vos processus business avec des méthodes éprouvées et des outils de pointe.
               </p>
-              
+
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <motion.div
@@ -138,7 +150,7 @@ export default function AnalyseDesAffairesPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -171,10 +183,10 @@ export default function AnalyseDesAffairesPage() {
                 Prêt à Transformer Votre Business ?
               </h2>
               <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                Contactez nos experts dès aujourd'hui pour un audit gratuit 
+                Contactez nos experts dès aujourd'hui pour un audit gratuit
                 et découvrez comment optimiser vos performances.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/contact"
@@ -190,7 +202,7 @@ export default function AnalyseDesAffairesPage() {
                   Appeler Maintenant
                 </a>
               </div>
-              
+
               <div className="mt-8 text-sm text-blue-200">
                 ✓ Audit gratuit • ✓ Devis sous 24h • ✓ Accompagnement personnalisé
               </div>

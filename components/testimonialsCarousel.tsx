@@ -11,12 +11,12 @@ const TestimonialsCarousel = () => {
       name: "Marie Dubois",
       position: "Directrice Générale",
       company: "TechInnovate",
-      content: "AuraPro a transformé notre stratégie digitale. Leur expertise en analyse d'affaires nous a permis d'augmenter notre chiffre d'affaires de 250% en 18 mois.",
+      content: "BTIC a transformé notre stratégie digitale. Leur expertise en analyse d'affaires nous a permis d'augmenter notre chiffre d'affaires de 250% en 18 mois.",
       rating: 5,
       avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face"
     },
     {
-      name: "Pierre Martin",
+      name: "Ismael OUEDRAOGO",
       position: "PDG",
       company: "ConstructPro",
       content: "Leur équipe BTP est exceptionnelle. Ils ont livré notre projet de centre commercial en avance et sous budget. Un professionnalisme remarquable.",
@@ -24,10 +24,10 @@ const TestimonialsCarousel = () => {
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
     },
     {
-      name: "Sophie Laurent",
+      name: "Paulette DOSSA",
       position: "Responsable Marketing",
       company: "EcoTourism",
-      content: "Grâce à AuraPro, notre activité touristique a doublé. Leur approche innovante et leur connaissance du secteur sont impressionnantes.",
+      content: "Grâce à BTIC, notre activité touristique a doublé. Leur approche innovante et leur connaissance du secteur sont impressionnantes.",
       rating: 5,
       avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face"
     },
@@ -35,7 +35,7 @@ const TestimonialsCarousel = () => {
       name: "Jean Durand",
       position: "Fondateur",
       company: "CommerceLocal",
-      content: "L'accompagnement d'AuraPro dans notre transformation e-commerce a été décisif. Une équipe à l'écoute et des résultats concrets.",
+      content: "L'accompagnement de BTIC dans notre transformation e-commerce a été décisif. Une équipe à l'écoute et des résultats concrets.",
       rating: 5,
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
     }

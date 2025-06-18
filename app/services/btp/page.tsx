@@ -10,22 +10,18 @@ export default function BTPPage() {
   const services = [
     {
       icon: FaBuilding,
-      title: "Construction Neuve",
+      title: "Vente de matériaux de construction & Quicaillerie",
       description: "Bâtiments résidentiels et commerciaux clés en main"
     },
     {
       icon: FaTools,
       title: "Rénovation",
-      description: "Modernisation et réhabilitation de bâtiments existants"
+      description: "Gestion immobilière"
     },
-    {
-      icon: FaHardHat,
-      title: "Travaux Publics",
-      description: "Infrastructure routière et aménagements urbains"
-    },
+  
     {
       icon: FaCertificate,
-      title: "Expertise Technique",
+      title: "Gestion immobilière",
       description: "Études de faisabilité et conseils en ingénierie"
     }
   ]
@@ -65,14 +61,14 @@ export default function BTPPage() {
               <span className="text-sm font-medium">Expertise BTP</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Bâtiment & <span className="text-orange-300">Travaux Publics</span>
+              Matériaux de construction   <span className="text-orange-300">-Quincaillerie-</span>Gestion immobilière 
             </h1>
             <p className="text-xl md:text-2xl text-orange-100 mb-8 max-w-3xl mx-auto">
               Construisons ensemble l'avenir avec des projets durables et innovants
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button href="#contact" variant="white" className="text-lg px-8 py-4">
-                Demander un Devis
+                Voir notre boutique
                 <FaArrowRight className="ml-2" />
               </Button>
               <Button href="#services" className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30">
