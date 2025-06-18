@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Menu, X,Store,Building2, TrendingUp, ShoppingCart, MapPin, Star, ArrowRight, Phone, Mail, CheckCircle, Users, Award, Globe } from 'lucide-react';
+import { ChevronDown, Menu, X, Store, Building2, TrendingUp, ShoppingCart, MapPin, Star, ArrowRight, Phone, Mail, CheckCircle, Users, Award, Globe } from 'lucide-react';
+import Link from 'next/link';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -58,7 +59,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent w-16 h-16">
             <a href="/">
-            <img src="/images/Logo_btic 1.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src="/images/Logo_btic 1.png" alt="Logo" className="w-full h-full object-contain" />
             </a>
           </div>
 
@@ -99,9 +100,11 @@ const Header = () => {
               Contact
             </a>
 
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
-              Boutique
-            </button>
+            <Link href="/marketplace">
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
+                Boutique
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -145,9 +148,11 @@ const Header = () => {
               <a href="contact" className="block py-2 px-2 text-gray-900 hover:bg-gray-50 rounded-md transition-colors text-sm">
                 Contact
               </a>
-              <button className="w-full mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 text-sm">
-                Boutique
-              </button>
+              <Link href="/marketplace">
+                <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
+                  Boutique
+                </button>
+              </Link>
             </div>
           </div>
         )}
