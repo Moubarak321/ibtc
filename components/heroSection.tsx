@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
-
+import Carousel from "./ui/carousel"; 
 const HeroSection = () => {
   // Animation variants
   const containerVariants = {
@@ -130,7 +130,7 @@ const HeroSection = () => {
           </motion.p>
           
           <motion.p 
-            className="text-lg mb-12 text-gray-300 max-w-2xl mx-auto"
+            className="text-lg mb-12 text-black max-w-2xl mx-auto"
             variants={itemVariants}
           >
             De l'analyse d'affaires au BTP, du commerce général au tourisme, 
@@ -226,6 +226,7 @@ const HeroSection = () => {
           />
         </div>
       </motion.div>
+      <Carousel/>
     </section>
   );
 };

@@ -22,7 +22,7 @@ export default function AnalyseDesAffairesPage() {
     {
       icon: FaCog,
       title: "Etude de marché",
-      description: "Accompagnement dans votre transition numérique",
+      description: "Accompagnement dans votre transition numérique,de l’analyse stratégique à l’action terrain",
       slug: "/etude"
     },
     {
@@ -208,6 +208,7 @@ export default function AnalyseDesAffairesPage() {
               </div>
             </motion.div>
           </div>
+          
         </div>
       </AnimatedSection>
     </main>
