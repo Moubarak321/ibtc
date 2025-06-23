@@ -1,234 +1,196 @@
-import React from 'react';
-import { ArrowRight, Play } from 'lucide-react';
-import { motion } from 'framer-motion';
-import Carousel from "./ui/carousel"; 
-const HeroSection = () => {
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
-  };
+"use client";
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
-    }
-  };
+const ModernCarousel = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
 
-  const floatVariants = {
-    float: {
-      y: [0, -20, 0],
-      transition: {
-        duration: 6,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
+  // Données du carrousel avec images et textes
+  const slides = [
+    {
+      id: 1,
+      image: "https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80",
+      title: "Analyse d'Affaires",
+      subtitle: "Stratégies Innovantes",
+      description: "Nous analysons vos besoins pour créer des solutions sur mesure qui propulsent votre entreprise vers le succès.",
+      cta: "Découvrir nos analyses",
+      gradient: "from-blue-600/80 to-purple-600/80"
     },
-    pulse: {
-      scale: [1, 1.05, 1],
-      opacity: [0.2, 0.3, 0.2],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
+    {
+      id: 2,
+      image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+      title: "BTP & Construction",
+      subtitle: "Bâtir l'Avenir",
+      description: "Des fondations solides aux finitions parfaites, nous réalisons vos projets de construction avec expertise et qualité.",
+      cta: "Voir nos réalisations",
+      gradient: "from-orange-600/80 to-red-600/80"
+    },
+    {
+      id: 3,
+      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
+      title: "Commerce Général",
+      subtitle: "Solutions Commerciales",
+      description: "De la distribution aux ventes, nous offrons des services commerciaux complets pour développer votre business.",
+      cta: "Explorer nos services",
+      gradient: "from-green-600/80 to-teal-600/80"
+    },
+    {
+      id: 4,
+      image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80",
+      title: "Tourisme & Voyage",
+      subtitle: "Expériences Inoubliables",
+      description: "Créons ensemble des expériences touristiques uniques qui marquent les esprits et fidélisent vos clients.",
+      cta: "Planifier votre voyage",
+      gradient: "from-purple-600/80 to-pink-600/80"
     }
+  ];
+
+  // Auto-play du carrousel
+  useEffect(() => {
+    if (isPlaying) {
+      const interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isPlaying, slides.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
-  const statsVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.8
-      }
-    })
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const goToSlide = (index: React.SetStateAction<number>) => {
+    setCurrentSlide(index);
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
 
   return (
-    <section id="accueil" className="min-h-screen relative overflow-hidden flex items-center">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"
-          animate={{
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-      </div>
-      
-      {/* Floating Elements */}
-      <motion.div 
-        className="absolute top-20 left-10 w-20 h-20 bg-blue-400/20 rounded-full"
-        variants={floatVariants}
-        animate="float"
-      />
-      <motion.div 
-        className="absolute top-40 right-20 w-16 h-16 bg-purple-400/20 rounded-full"
-        variants={floatVariants}
-        animate="pulse"
-      />
-      <motion.div 
-        className="absolute bottom-20 left-20 w-24 h-24 bg-blue-300/20 rounded-full"
-        variants={floatVariants}
-        animate="float"
-        transition={{ delay: 1 }}
-      />
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div 
-          className="max-w-4xl mx-auto text-center text-white"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.h1 
-            className="text-5xl md:text-7xl font-bold mb-6"
-            variants={itemVariants}
+    <div className="mt-12 relative w-full h-[600px] overflow-hidden rounded-2xl shadow-2xl">
+      {/* Conteneur des slides */}
+      <div className="relative w-full h-full">
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              index === currentSlide 
+                ? 'opacity-100 scale-100' 
+                : 'opacity-0 scale-105'
+            }`}
           >
-            Votre Partenaire
-            <motion.span 
-              className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
-              animate={{
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            >
-              Multi-Services
-            </motion.span>
-          </motion.h1>
-          
-          <motion.p 
-            className="text-xl md:text-2xl mb-8 text-gray-200"
-            variants={itemVariants}
-          >
-            Excellence • Innovation • Confiance
-          </motion.p>
-          
-          <motion.p 
-            className="text-lg mb-12 text-black max-w-2xl mx-auto"
-            variants={itemVariants}
-          >
-            De l'analyse d'affaires au BTP, du commerce général au tourisme, 
-            nous transformons vos idées en succès concrets avec notre expertise multisectorielle.
-          </motion.p>
-          
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            variants={itemVariants}
-          >
-            <motion.a 
-              href="#servicesSection"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Boutique
-              <motion.div
-                whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </motion.div>
-            </motion.a>
+            {/* Image de fond */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${slide.image})` }}
+            />
             
-            <motion.button 
-              className="border-2 border-white/30 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300 flex items-center justify-center group"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              >
-                <Play className="mr-2 h-5 w-5" />
-              </motion.div>
-              Voir notre vidéo
-            </motion.button>
-          </motion.div>
-          
-          {/* Stats */}
-          <motion.div 
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20"
-            initial="hidden"
-            animate="visible"
-          >
-            {[
-              { value: "500+", label: "Projets Réalisés", color: "text-blue-400" },
-              { value: "11+", label: "Années d'Expérience", color: "text-purple-400" },
-              { value: "98%", label: "Clients Satisfaits", color: "text-blue-400" },
-              { value: "24/7", label: "Support Client", color: "text-purple-400" }
-            ].map((stat, i) => (
-              <motion.div 
-                key={i}
-                className="text-center"
-                variants={statsVariants}
-                custom={i}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className={`text-3xl md:text-4xl font-bold ${stat.color}`}>{stat.value}</div>
-                <div className="text-gray-300">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
+            {/* Overlay gradient */}
+            <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient} backdrop-blur-[1px]`} />
+            
+            {/* Contenu texte */}
+            <div className="relative h-full flex items-center justify-center p-8">
+              <div className="text-center text-white max-w-4xl mx-auto">
+                <div className={`transform transition-all duration-1000 delay-300 ${
+                  index === currentSlide 
+                    ? 'translate-y-0 opacity-100' 
+                    : 'translate-y-8 opacity-0'
+                }`}>
+                  <p className="text-lg md:text-xl font-medium mb-2 text-blue-200">
+                    {slide.subtitle}
+                  </p>
+                  <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                    {slide.title}
+                  </h2>
+                  <p className="text-lg md:text-xl text-gray-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    {slide.description}
+                  </p>
+                  <button className="bg-white/20 backdrop-blur-md text-white px-8 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30 hover:scale-105 hover:shadow-xl">
+                    {slide.cta}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Contrôles de navigation */}
+      <div className="absolute inset-y-0 left-4 flex items-center">
+        <button
+          onClick={prevSlide}
+          className="bg-white/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 hover:scale-110 shadow-lg"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
       </div>
       
-      {/* Scroll Indicator */}
-      <motion.div 
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        animate={{
-          y: [0, 10, 0],
-          opacity: [1, 0.8, 1]
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      >
-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-          <motion.div 
-            className="w-1 h-3 bg-white rounded-full mt-2"
-            animate={{
-              y: [0, 5, 0],
-              opacity: [0.6, 1, 0.6]
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        </div>
-      </motion.div>
-      <Carousel/>
-    </section>
+      <div className="absolute inset-y-0 right-4 flex items-center">
+        <button
+          onClick={nextSlide}
+          className="bg-white/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 hover:scale-110 shadow-lg"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Indicateurs de progression */}
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`relative overflow-hidden rounded-full transition-all duration-300 ${
+              index === currentSlide 
+                ? 'w-12 h-3 bg-white' 
+                : 'w-3 h-3 bg-white/50 hover:bg-white/70'
+            }`}
+          >
+            {index === currentSlide && isPlaying && (
+              <div 
+                className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
+                style={{
+                  animation: 'progress 5s linear infinite'
+                }}
+              />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Contrôle Play/Pause */}
+      <div className="absolute top-6 right-6">
+        <button
+          onClick={togglePlayPause}
+          className="bg-white/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-white/30 transition-all duration-300 hover:scale-110 shadow-lg"
+        >
+          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {/* Informations sur le slide actuel */}
+      <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium">
+        {currentSlide + 1} / {slides.length}
+      </div>
+
+      <style jsx>{`
+        @keyframes progress {
+          from {
+            transform: translateX(-100%);
+          }
+          to {
+            transform: translateX(0%);
+          }
+        }
+      `}</style>
+    </div>
   );
 };
 
-export default HeroSection;
+export default ModernCarousel;
