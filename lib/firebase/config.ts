@@ -20,7 +20,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: "G-WTQB435XJR"
 };
-
+// console.log(firebaseConfig.apiKey)
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
@@ -31,3 +31,8 @@ export const getFirebaseAnalytics = async () => {
   if (typeof window === "undefined") return null;
   return (await isSupported()) ? getAnalytics(app) : null;
 };
+
+
+
+
+
