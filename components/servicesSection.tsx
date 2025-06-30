@@ -5,35 +5,37 @@ import AnimatedSection from '@/components/ui/AnimatedSection';
 import Link from 'next/link';
 const ServicesSection = () => {
   const services = [
+    
+    {
+      icon: ShoppingBag,
+      title: "Marketplace",
+      description: "Développement commercial et solutions e-commerce pour votre entreprise.",
+      features: ["E-commerce", "Marketing digital", "Gestion des ventes"],
+      slug: "../marketplace"
+    },
     {
       icon: BarChart3,
       title: "Analyse des Affaires",
       description: "Stratégies personnalisées pour optimiser vos performances et accélérer votre croissance.",
       
-      features: ["Representation commerciale", "Négoce international et distribution", "Etude de marché", "Comparatif de prix", "Divers services & prestations"],
+      features: ["Representation commerciale", "Négoce international et distribution", "Etude de marché & Comparatif de prix", "Divers services & prestations"],
       slug: "/services/analyse-des-affaires"
     },
     {
       icon: MapPin,
       title: "Tourisme",
       description: "Services touristiques innovants pour valoriser votre destination.",
-      features: ["Promotion touristique", "Événementiel", "Hébergement","Package Touristique"],
+      features: ["Promotion & vulgarisation du secteur touristique", "Événementiel", "Hôtellerie"],
       slug: "/services/tourisme"
     },
     {
       icon: Building2,
       title: "BTP",
       description: "Solutions complètes pour vos projets de construction et travaux publics.",
-      features: ["Vente de matériaux de construction et quincaillerie", "Gestion immobilière"],
+      features: ["Vente de matériaux de construction et quincaillerie","Forage & Hydraulique villageoise","Electricité/Energie renouvelable","Gestion immobilière"],
       slug: "/services/btp"
     },
-    {
-      icon: ShoppingBag,
-      title: "Marketplace",
-      description: "Développement commercial et solutions e-commerce pour votre entreprise.",
-      features: ["E-commerce", "Marketing digital", "Gestion des ventes"],
-      slug: "/services/commerce-general"
-    },
+   
     
   ];
 
@@ -129,12 +131,10 @@ const ServicesSection = () => {
                     
                     {service.features.map((feature, featureIndex) => (
                       
-                      <motion.a
-                    
-                       href={service.slug}>
+                      
                       <motion.li 
                         key={featureIndex} 
-                        className="flex items-center text-sm text-gray-500 transition-colors cursor-pointer"
+                        className="flex items-center text-sm text-gray-500 transition-colors "
                         initial={{ x: -10, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.1 * featureIndex, duration: 0.3 }}
@@ -143,7 +143,7 @@ const ServicesSection = () => {
                         <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                         {feature}
                       </motion.li>
-                      </motion.a>
+                     
                     ))}
                   </ul>
                   

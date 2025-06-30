@@ -101,10 +101,21 @@ const Header = () => {
             </a>
 
             <Link href="/marketplace">
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
+              <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
+                <Store className="w-4 h-4" />
                 Boutique
               </button>
             </Link>
+
+            <Link href="/cart">
+              <button className="flex items-center gap-2  border border-color:bg-gradient-to-r from-blue-600 text-black px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm bg-white">
+               
+               
+                <ShoppingCart className="w-6 h-6 " />
+                Panier
+              </button>
+            </Link>
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -151,6 +162,12 @@ const Header = () => {
               <Link href="/marketplace">
                 <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm">
                   Boutique
+                </button>
+              </Link>
+                <Link href="/cart">
+                <button className="flex items-center gap-2  border border-color:bg-gradient-to-r from-blue-600 text-black px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm bg-white">
+                  <ShoppingCart className="w-6 h-6 " />
+                  Panier
                 </button>
               </Link>
             </div>

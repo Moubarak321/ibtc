@@ -1,30 +1,61 @@
 "use client";
 
 import { motion } from 'framer-motion'
-import { FaBuilding, FaHardHat, FaTools, FaCertificate, FaArrowRight, FaCheck, FaPhone } from 'react-icons/fa'
+import { FaBuilding, FaHardHat, FaTools, FaCertificate, FaArrowRight, FaCheck, FaPhone, FaWater, FaBolt } from 'react-icons/fa'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
 
+import React, { useState } from 'react';
+
+type Services = {
+  icon: React.ElementType;
+  title: string;
+  image: string;
+  description: string;
+  header: string;
+  details: string;
+};
+
+const services: Services[] = [
+  {
+    icon: FaTools,
+    title: "Vente de matériaux de construction & Quicaillerie",
+    description: "Bâtiments résidentiels et commerciaux clés en main",
+    image: "/images/c10.png",
+    header: "Vente de matériaux de construction & Quicaillerie",
+    details: "L'excellence n'est pas un acte, mais une habitude. Nous nous efforçons chaque jour de dépasser les attentes de nos clients.Accompagner nos clients dans leur réussite en leur offrant des solutions multi-services innovantes, personnalisées et de haute qualité, tout en contribuant au développement économique et social de notre région.Devenir le leader régional des services intégrés, reconnu pour notre expertise multi-sectorielle, notre innovation constante et notre contribution positive au développement durable.",
+  },
+  {
+    icon: FaWater,
+    title: "Forage & Hydraulique villageoise",
+    description: "Gestion immobilière",
+    header: "Forage & Hydraulique villageoise",
+    image: "/images/c10.png",
+    details: "L'excellence n'est pas un acte, mais une habitude. Nous nous efforçons chaque jour de dépasser les attentes de nos clients.Accompagner nos clients dans leur réussite en leur offrant des solutions multi-services innovantes, personnalisées et de haute qualité, tout en contribuant au développement économique et social de notre région.Devenir le leader régional des services intégrés, reconnu pour notre expertise multi-sectorielle, notre innovation constante et notre contribution positive au développement durable.",
+  },
+  {
+    icon: FaBolt,
+    title: "Electricité/Energie renouvelable",
+    description: "Études de faisabilité et conseils en ingénierie",
+    header: "Electricité/Energie renouvelable",
+    image: "/images/c10.png",
+    details: "L'excellence n'est pas un acte, mais une habitude. Nous nous efforçons chaque jour de dépasser les attentes de nos clients.Accompagner nos clients dans leur réussite en leur offrant des solutions multi-services innovantes, personnalisées et de haute qualité, tout en contribuant au développement économique et social de notre région.Devenir le leader régional des services intégrés, reconnu pour notre expertise multi-sectorielle, notre innovation constante et notre contribution positive au développement durable.",
+  },
+
+  {
+    icon: FaBuilding,
+    title: "Gestion immobilière",
+    description: "Études de faisabilité et conseils en ingénierie",
+    header: "Gestion immobilière",
+    image: "/images/c10.png",
+    details: "L'excellence n'est pas un acte, mais une habitude. Nous nous efforçons chaque jour de dépasser les attentes de nos clients.Accompagner nos clients dans leur réussite en leur offrant des solutions multi-services innovantes, personnalisées et de haute qualité, tout en contribuant au développement économique et social de notre région.Devenir le leader régional des services intégrés, reconnu pour notre expertise multi-sectorielle, notre innovation constante et notre contribution positive au développement durable.",
+  }
+]
+
 export default function BTPPage() {
-  const services = [
-    {
-      icon: FaBuilding,
-      title: "Vente de matériaux de construction & Quicaillerie",
-      description: "Bâtiments résidentiels et commerciaux clés en main"
-    },
-    {
-      icon: FaTools,
-      title: "Rénovation",
-      description: "Gestion immobilière"
-    },
-  
-    {
-      icon: FaCertificate,
-      title: "Gestion immobilière",
-      description: "Études de faisabilité et conseils en ingénierie"
-    }
-  ]
+  const [selectedservice, setSelectedservice] = useState<Services | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   const projects = [
     { name: "Centre Commercial Modern", surface: "15,000 m²", duration: "18 mois" },
@@ -48,7 +79,7 @@ export default function BTPPage() {
           <div className="absolute top-10 left-20 w-64 h-64 bg-orange-400/20 rounded-full blur-3xl" />
           <div className="absolute bottom-10 right-20 w-80 h-80 bg-red-400/20 rounded-full blur-3xl" />
         </div>
-        
+
         <div className="container relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -61,7 +92,7 @@ export default function BTPPage() {
               <span className="text-sm font-medium">Expertise BTP</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Matériaux de construction   <span className="text-orange-300">-Quincaillerie-</span>Gestion immobilière 
+              Matériaux de construction   <span className="text-orange-300">-Quincaillerie-</span>Gestion immobilière
             </h1>
             <p className="text-xl md:text-2xl text-orange-100 mb-8 max-w-3xl mx-auto">
               Construisons ensemble l'avenir avec des projets durables et innovants
@@ -88,7 +119,7 @@ export default function BTPPage() {
               De la conception à la livraison, nous maîtrisons tous les aspects de la construction
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service, index) => (
               <motion.div
@@ -104,6 +135,23 @@ export default function BTPPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
                 <p className="text-gray-600">{service.description}</p>
+
+                <button
+                  style={{
+                    marginTop: 12,
+                    color: "blue",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: 5,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setSelectedservice(service);
+                    setShowForm(false);
+                  }}
+                >
+                  En savoir plus
+                </button>
               </motion.div>
             ))}
           </div>
@@ -119,10 +167,10 @@ export default function BTPPage() {
                 Nos <span className="text-orange-600">Réalisations</span> Marquantes
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                Plus de 200 projets réalisés avec succès, de la construction résidentielle 
+                Plus de 200 projets réalisés avec succès, de la construction résidentielle
                 aux grands projets d'infrastructure.
               </p>
-              
+
               <div className="space-y-6">
                 {projects.map((project, index) => (
                   <motion.div
@@ -141,7 +189,7 @@ export default function BTPPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -155,7 +203,7 @@ export default function BTPPage() {
                   className="rounded-2xl shadow-2xl"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-orange-600/20 to-transparent rounded-2xl" />
-                
+
                 {/* Floating Stats */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -168,7 +216,7 @@ export default function BTPPage() {
                     <div className="text-sm text-gray-600">Projets Réalisés</div>
                   </div>
                 </motion.div>
-                
+
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -186,6 +234,125 @@ export default function BTPPage() {
         </div>
       </AnimatedSection>
 
+      {/* MODAL */}
+      {selectedservice && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: 25,
+              borderRadius: 10,
+              maxWidth: 600,
+              width: "90%",
+              position: "relative",
+              maxHeight: "90vh",
+              overflowY: "auto",
+            }}
+          >
+            <button
+              onClick={() => setSelectedservice(null)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 15,
+                background: "none",
+                border: "none",
+                fontSize: 20,
+                cursor: "pointer",
+              }}
+              aria-label="Fermer la fenêtre"
+            >
+              ✖
+            </button>
+
+            <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors flex items-center justify-center">{selectedservice.header}</h3>
+            <div style={{ marginBottom: 15 }}>
+              <img
+                src={selectedservice.image}
+                alt={selectedservice.title}
+                style={{
+                  width: "100%",
+                  height: 180,
+                  objectFit: "cover",
+                  borderRadius: 8,
+                  marginBottom: 15,
+                }}
+              />
+            </div>
+
+
+            <p style={{ marginBottom: 15 }}>{selectedservice.details}</p>
+
+            {showForm ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Demande envoyée !");
+                  setSelectedservice(null);
+                  setShowForm(false);
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Votre nom"
+                  required
+                  style={inputStyle}
+                />
+                <input
+                  type="email"
+                  placeholder="Votre email"
+                  required
+                  style={inputStyle}
+                />
+                <input
+                  type="telephone"
+                  placeholder="Votre téléphone"
+                  required
+                  style={inputStyle}
+                />
+                <input
+                  type="date"
+                  required
+                  style={inputStyle} />
+                <input
+                  type="text"
+                  placeholder="Message...."
+                  required
+                  style={{
+                    width: "50%",
+                    height: "50%",
+                    padding: 10,
+                    marginBottom: 10,
+                    borderRadius: 5,
+                    border: "1px solid #ccc"
+                  }} />
+
+                <button type="submit" style={submitBtn} >
+                  Confirmer la demande
+                </button>
+              </form>
+            ) : (
+              <button onClick={() => setShowForm(true)} style={confirmBtn}>
+                Demandez un devis
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Certifications */}
       <AnimatedSection className="section">
         <div className="container">
@@ -193,7 +360,7 @@ export default function BTPPage() {
             <h2 className="text-3xl font-bold mb-4">Nos Certifications</h2>
             <p className="text-gray-600">Qualité et conformité garanties</p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {certifications.map((cert, index) => (
               <motion.div
@@ -224,10 +391,10 @@ export default function BTPPage() {
                 Votre Projet Mérite le Meilleur
               </h2>
               <p className="text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
-                Confiez-nous votre projet de construction. Devis gratuit et étude personnalisée 
+                Confiez-nous votre projet de construction. Devis gratuit et étude personnalisée
                 par nos experts certifiés.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/contact"
@@ -244,7 +411,7 @@ export default function BTPPage() {
                   Urgence 24/7
                 </a>
               </div>
-              
+
               <div className="mt-8 text-sm text-orange-200">
                 ✓ Devis sous 48h • ✓ Garantie décennale • ✓ Suivi de chantier en temps réel
               </div>
@@ -255,3 +422,32 @@ export default function BTPPage() {
     </main>
   )
 }
+// Styles
+const inputStyle = {
+  width: "100%",
+  padding: 10,
+  marginBottom: 10,
+  borderRadius: 5,
+  border: "1px solid #ccc",
+};
+
+const submitBtn = {
+  width: "100%",
+  padding: 12,
+  backgroundColor: "blue",
+  color: "white",
+  border: "none",
+  borderRadius: 6,
+  fontWeight: "bold",
+  cursor: "pointer",
+};
+
+const confirmBtn = {
+  padding: "10px 20px",
+  backgroundColor: "blue",
+  color: "white",
+  border: "none",
+  borderRadius: 5,
+  fontWeight: "bold",
+  cursor: "pointer",
+};

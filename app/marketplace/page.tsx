@@ -470,7 +470,7 @@ const MarketplacePage = () => {
         >
           <ChevronRight className="w-6 h-6" />
         </button>
-
+.
         {/* Dots Indicator */}
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
           {carouselSlides.map((_, index) => (

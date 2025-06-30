@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Award, ChevronLeft, ChevronRight, Plus, Minus, Check } from 'lucide-react';
-
+import Link from 'next/link';
 export default function ProductPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -34,8 +34,11 @@ export default function ProductPage() {
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      
       <div className="max-w-7xl mx-auto px-4 py-8">
+        
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-8">
           <span>Accueil</span>
@@ -149,7 +152,9 @@ export default function ProductPage() {
 
                 <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2">
                   <ShoppingCart className="w-5 h-5" />
+                  <Link href="/cart">
                   <span>Ajouter au panier</span>
+                  </Link>
                 </button>
 
                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-4 px-6 rounded-xl transition-all duration-300">
@@ -306,6 +311,7 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+      
     </div>
   );
 }
