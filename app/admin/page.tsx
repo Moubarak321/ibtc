@@ -167,7 +167,64 @@ const AdminDashboard = () => {
 
 
 
+// préremplir le form
+const prefillForm = () => {
+    const form = document.querySelector("#productForm");
+    if (!form) return;
 
+    // Champs de base
+    (form.querySelector('input[placeholder="Nom"]') as HTMLInputElement)!.value = "Perceuse à percussion Bosch GSB 13 RE Professional";
+    (form.querySelector('input[placeholder="ID (ex: bosch-gsb-13-re)"]') as HTMLInputElement)!.value = "bosch-gsb-13-re";
+
+    const priceInputs = form.querySelectorAll('input[placeholder="0.00"]') as NodeListOf<HTMLInputElement>;
+    priceInputs[0]!.value = "129.99"; // prix
+    priceInputs[1]!.value = "159.99"; // ancien prix
+
+    (form.querySelector('input[placeholder="25"]') as HTMLInputElement)!.value = "19";
+    (form.querySelector('input[placeholder="Ex: Outillage > Perceuses"]') as HTMLInputElement)!.value = "Outillage > Perceuses";
+    (form.querySelector('input[placeholder="Bosch"]') as HTMLInputElement)!.value = "Bosch";
+
+    // Textareas
+    (form.querySelector('textarea[placeholder*="https://image1.jpg"]') as HTMLTextAreaElement)!.value = JSON.stringify([
+        "https://example.com/images/perceuse1.jpg",
+        "https://example.com/images/perceuse2.jpg"
+    ]);
+
+    (form.querySelector('textarea[placeholder*="Petite description"]') as HTMLTextAreaElement)!.value =
+        "Compacte, puissante et idéale pour les travaux de perçage quotidiens.";
+
+    (form.querySelector('textarea[placeholder*="Texte plus détaillé"]') as HTMLTextAreaElement)!.value =
+        "La perceuse à percussion Bosch GSB 13 RE Professional est conçue pour les artisans exigeants. Dotée d’un moteur de 600W, elle assure un perçage efficace dans le bois, l’acier et la maçonnerie. Son design compact et ergonomique offre une prise en main optimale, même dans les espaces restreints.";
+
+    (form.querySelector('textarea[placeholder*="Puissance"]') as HTMLTextAreaElement)!.value = JSON.stringify({
+        "Puissance": "600W",
+        "Vitesse": "2800 tr/min",
+        "Capacité de perçage (béton)": "13 mm",
+        "Poids": "1.8 kg"
+    });
+
+    (form.querySelector('textarea[placeholder*="Fonction percussion"]') as HTMLTextAreaElement)!.value = JSON.stringify([
+        "Fonction percussion",
+        "Poignée ergonomique",
+        "Contrôle de vitesse",
+        "Mandrin automatique"
+    ]);
+
+    // Sélecteurs
+    form.querySelectorAll("select")[0]!.value = "true"; // En stock
+    form.querySelectorAll("select")[1]!.value = "true"; // Livraison rapide
+
+    (form.querySelector('textarea[placeholder*="Livraison gratuite"]') as HTMLTextAreaElement)!.value = JSON.stringify({
+        delivery: {
+            title: "Livraison gratuite",
+            description: "Sous 48h dès 50€ d’achat"
+        },
+        warranty: {
+            title: "Garantie 2 ans",
+            description: "Prise en charge constructeur"
+        }
+    });
+};
 
 
 
@@ -248,6 +305,13 @@ const AdminDashboard = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
+                    <button
+  onClick={prefillForm}
+  className="mb-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-all"
+>
+  🪄 Pré-remplir avec un exemple
+</button>
+
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
