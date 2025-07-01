@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { app } from '@/lib/firebase/config';
 
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -109,6 +110,78 @@ const AdminDashboard = () => {
     }
 
 
+    // Ajout de produit
+    const handleSaveProduct = async () => {
+        console.log("Enregistrement du produit...");
+        const db = getFirestore(app);
+        const form = document.getElementById("productForm");
+        console.log("Formulaire trouvé :", form);
+        if (!form) {
+            alert("❌ Formulaire non trouvé.");
+            return;
+        }
+
+        try {
+            const getValue = (selector: string) =>
+                (form.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement)?.value.trim();
+
+            const product = {
+                name: getValue('input[placeholder="Nom"]'),
+                id: getValue('input[placeholder="ID (ex: bosch-gsb-13-re)"]'),
+                price: parseFloat(getValue('input[placeholder="0.00"]') || "0"),
+                oldPrice: parseFloat(((form.querySelectorAll('input[placeholder="0.00"]')[1] as HTMLInputElement)?.value) || "0"),
+                discount: parseInt(getValue('input[placeholder="25"]') || "0"),
+                category: getValue('input[placeholder="Ex: Outillage > Perceuses"]'),
+                brand: getValue('input[placeholder="Bosch"]'),
+                images: JSON.parse(getValue('textarea[placeholder*="https://image1.jpg"]') || "[]"),
+                shortDescription: getValue('textarea[placeholder*="Petite description"]'),
+                longDescription: getValue('textarea[placeholder*="Texte plus détaillé"]'),
+                specifications: JSON.parse(getValue('textarea[placeholder*="Puissance"]') || "{}"),
+                features: JSON.parse(getValue('textarea[placeholder*="Fonction percussion"]') || "[]"),
+                inStock: (form.querySelectorAll('select')[0] as HTMLSelectElement)?.value === "true",
+                fastDelivery: (form.querySelectorAll('select')[1] as HTMLSelectElement)?.value === "true",
+                services: JSON.parse(getValue('textarea[placeholder*="Livraison gratuite"]') || "{}"),
+                createdAt: new Date()
+            };
+
+            console.log("Produit à ajouter :", product.name);
+
+            if (!product.name || product.images.length === 0) {
+                alert("⚠️ Veuillez remplir le nom et au moins une image.");
+                return;
+            }
+
+            await addDoc(collection(db, "products"), product);
+            console.log("Produit ajouté :", product.name);
+            alert("✅ Produit ajouté avec succès !");
+            setShowProductModal(false);
+
+        } catch (error) {
+            console.error("Erreur lors de l'ajout :", error);
+            alert("❌ Une erreur est survenue. Vérifiez les champs JSON.");
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -161,69 +234,203 @@ const AdminDashboard = () => {
     );
 
     const ProductModal = () => (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md transform transition-all duration-300 scale-95 hover:scale-100">
-                <h3 className="text-xl font-bold mb-4">
-                    {selectedProduct ? 'Modifier le produit' : 'Nouveau produit'}
-                </h3>
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Nom du produit</label>
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+            <div id="productForm" className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto  transform transition-all duration-300 scale-95 hover:scale-100 border border-gray-100">
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-2xl font-bold text-gray-800">
+                        {selectedProduct ? '✏️ Modifier le produit' : '➕ Nouveau produit'}
+                    </h3>
+                    <button
+                        onClick={() => setShowProductModal(false)}
+                        className="text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* Nom */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Nom du produit</label>
                         <input
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="Nom du produit"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            placeholder="Nom"
                             defaultValue={selectedProduct?.name || ''}
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Prix</label>
+
+                    {/* ID produit */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">ID du produit</label>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            placeholder="ID (ex: bosch-gsb-13-re)"
+                        />
+                    </div>
+
+                    {/* Prix & Ancien prix */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Prix</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-2.5 text-gray-500">€</span>
                             <input
                                 type="number"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                                placeholder="Prix"
-                                defaultValue={selectedProduct?.price || ''}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                            <input
-                                type="number"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                                placeholder="Stock"
-                                defaultValue={selectedProduct?.stock || ''}
+                                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                placeholder="0.00"
                             />
                         </div>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
-                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                            <option>Électronique</option>
-                            <option>Téléphone</option>
-                            <option>Audio</option>
-                            <option>Tablette</option>
+
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Ancien prix</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-2.5 text-gray-500">€</span>
+                            <input
+                                type="number"
+                                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all line-through text-gray-500"
+                                placeholder="0.00"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Remise */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Remise (%)</label>
+                        <div className="relative">
+                            <span className="absolute right-3 top-2.5 text-gray-500">%</span>
+                            <input
+                                type="number"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                placeholder="25"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Catégorie */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Catégorie</label>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            placeholder="Ex: Outillage > Perceuses"
+                        />
+                    </div>
+
+                    {/* Marque */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Marque</label>
+                        <input
+                            type="text"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                            placeholder="Bosch"
+                        />
+                    </div>
+
+                    {/* Images (JSON) */}
+                    <div className="col-span-2 space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Images (URLs, tableau JSON)</label>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[80px] font-mono text-sm"
+                            placeholder='["https://image1.jpg", "https://image2.jpg"]'
+                        ></textarea>
+                        <p className="text-xs text-gray-500 mt-1">Format JSON requis. Maximum 5 images.</p>
+                    </div>
+
+                    {/* Description courte */}
+                    <div className="col-span-2 space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Description courte</label>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[80px]"
+                            placeholder="Petite description visible sur la page principale"
+                        ></textarea>
+                        <p className="text-xs text-gray-500 mt-1">Maximum 150 caractères</p>
+                    </div>
+
+                    {/* Description longue */}
+                    <div className="col-span-2 space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Description complète</label>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[100px]"
+                            placeholder="Texte plus détaillé sur le produit"
+                        ></textarea>
+                    </div>
+
+                    {/* Caractéristiques */}
+                    <div className="col-span-2 space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Spécifications (objet JSON)</label>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[100px] font-mono text-sm"
+                            placeholder='{"Puissance":"600W","Poids":"1.8kg"}'
+                        ></textarea>
+                    </div>
+
+                    {/* Fonctionnalités */}
+                    <div className="col-span-2 space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Fonctionnalités (tableau JSON)</label>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[80px] font-mono text-sm"
+                            placeholder='["Fonction percussion", "Poignée ergonomique"]'
+                        ></textarea>
+                    </div>
+
+                    {/* Stock & Livraison rapide */}
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">En stock</label>
+                        <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white">
+                            <option value="true">✅ En stock</option>
+                            <option value="false">❌ Rupture</option>
                         </select>
                     </div>
+
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Livraison rapide</label>
+                        <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white">
+                            <option value="true">🚀 Disponible</option>
+                            <option value="false">⏳ Standard</option>
+                        </select>
+                    </div>
+
+                    {/* Services */}
+                    <div className="col-span-2 space-y-1">
+                        <label className="block text-sm font-medium text-gray-700">Services (objet JSON)</label>
+                        <textarea
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[100px] font-mono text-sm"
+                            placeholder={`{
+                                "delivery": {"title": "Livraison gratuite", "description": "Dès 50€"},
+                                "warranty": {"title": "Garantie 2 ans", "description": "Constructeur"}
+                                }`}
+                        ></textarea>
+                    </div>
                 </div>
-                <div className="flex gap-3 mt-6">
+
+                {/* Boutons */}
+                <div className="flex flex-col sm:flex-row gap-3 mt-8">
                     <button
                         onClick={() => setShowProductModal(false)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium text-gray-700 flex items-center justify-center gap-2"
                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
                         Annuler
                     </button>
                     <button
-                        onClick={() => setShowProductModal(false)}
-                        className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+                        onClick={handleSaveProduct}
+                        className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
                         Sauvegarder
                     </button>
                 </div>
             </div>
         </div>
     );
-
     const renderDashboard = () => (
         <div className="space-y-6 animate-fade-in">
             {/* Statistiques principales */}
@@ -594,8 +801,8 @@ const AdminDashboard = () => {
                                 key={id}
                                 onClick={() => setActiveTab(id)}
                                 className={`w-full flex items-center px-4 py-3 rounded-xl text-left transition-all duration-200 ${activeTab === id
-                                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg transform scale-105'
-                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg transform scale-105'
+                                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                     }`}
                             >
                                 <Icon className="w-5 h-5 mr-3" />
