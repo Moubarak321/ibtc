@@ -7,16 +7,12 @@ import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { app } from '@/lib/firebase/config';
 
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 
 const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
-    const [products, setProducts] = useState([
-        { id: 1, name: 'MacBook Pro M3', price: 2499, stock: 15, category: 'Électronique', status: 'Actif', image: '💻' },
-        { id: 2, name: 'iPhone 15 Pro', price: 1199, stock: 25, category: 'Téléphone', status: 'Actif', image: '📱' },
-        { id: 3, name: 'AirPods Pro', price: 249, stock: 50, category: 'Audio', status: 'Actif', image: '🎧' },
-        { id: 4, name: 'iPad Air', price: 599, stock: 8, category: 'Tablette', status: 'Rupture', image: '📱' },
-    ]);
+    const [products, setProducts] = useState<any[]>([]);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     const [orders, setOrders] = useState([
         { id: 1001, customer: 'Marie Dubois', total: 2748, status: 'Livré', date: '2024-06-25', items: 2 },
@@ -27,7 +23,7 @@ const AdminDashboard = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     type Product = {
-        id: number;
+        id: string; // Firestore uses string IDs
         name: string;
         price: number;
         stock: number;
@@ -61,12 +57,38 @@ const AdminDashboard = () => {
     }, []);
 
 
+
+
+    // ==========================================================================================================================================================
+    // back
     //   Auth
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const auth = getAuth(app);
 
+    // recupérer les produits depuis Firestore
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const db = getFirestore(app);
+            const snapshot = await getDocs(collection(db, "products"));
+            const productList = snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    name: data.name || '',
+                    price: data.price || 0,
+                    stock: data.stock || 0,
+                    category: data.category || '',
+                    status: data.status || '',
+                    image: (Array.isArray(data.images) && data.images.length > 0) ? data.images : '📦', // fallback emoji
+                } as Product;
+            });
+            setProducts(productList);
+        };
+
+        fetchProducts();
+    }, []);
     // Vérification de l'authentification
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -163,90 +185,85 @@ const AdminDashboard = () => {
     };
 
 
+    // préremplir le form
+    const prefillForm = () => {
+        const form = document.querySelector("#productForm");
+        if (!form) return;
+
+        // Champs de base
+        (form.querySelector('input[placeholder="Nom"]') as HTMLInputElement)!.value = "Perceuse à percussion Bosch GSB 13 RE Professional";
+        (form.querySelector('input[placeholder="ID (ex: bosch-gsb-13-re)"]') as HTMLInputElement)!.value = "bosch-gsb-13-re";
+
+        const priceInputs = form.querySelectorAll('input[placeholder="0.00"]') as NodeListOf<HTMLInputElement>;
+        priceInputs[0]!.value = "129.99"; // prix
+        priceInputs[1]!.value = "159.99"; // ancien prix
+
+        (form.querySelector('input[placeholder="25"]') as HTMLInputElement)!.value = "19";
+        (form.querySelector('input[placeholder="Ex: Outillage > Perceuses"]') as HTMLInputElement)!.value = "Outillage > Perceuses";
+        (form.querySelector('input[placeholder="Bosch"]') as HTMLInputElement)!.value = "Bosch";
+
+        // Textareas
+        (form.querySelector('textarea[placeholder*="https://image1.jpg"]') as HTMLTextAreaElement)!.value = JSON.stringify([
+            "https://example.com/images/perceuse1.jpg",
+            "https://example.com/images/perceuse2.jpg"
+        ]);
+
+        (form.querySelector('textarea[placeholder*="Petite description"]') as HTMLTextAreaElement)!.value =
+            "Compacte, puissante et idéale pour les travaux de perçage quotidiens.";
+
+        (form.querySelector('textarea[placeholder*="Texte plus détaillé"]') as HTMLTextAreaElement)!.value =
+            "La perceuse à percussion Bosch GSB 13 RE Professional est conçue pour les artisans exigeants. Dotée d’un moteur de 600W, elle assure un perçage efficace dans le bois, l’acier et la maçonnerie. Son design compact et ergonomique offre une prise en main optimale, même dans les espaces restreints.";
+
+        (form.querySelector('textarea[placeholder*="Puissance"]') as HTMLTextAreaElement)!.value = JSON.stringify({
+            "Puissance": "600W",
+            "Vitesse": "2800 tr/min",
+            "Capacité de perçage (béton)": "13 mm",
+            "Poids": "1.8 kg"
+        });
+
+        (form.querySelector('textarea[placeholder*="Fonction percussion"]') as HTMLTextAreaElement)!.value = JSON.stringify([
+            "Fonction percussion",
+            "Poignée ergonomique",
+            "Contrôle de vitesse",
+            "Mandrin automatique"
+        ]);
+
+        // Sélecteurs
+        form.querySelectorAll("select")[0]!.value = "true"; // En stock
+        form.querySelectorAll("select")[1]!.value = "true"; // Livraison rapide
+
+        (form.querySelector('textarea[placeholder*="Livraison gratuite"]') as HTMLTextAreaElement)!.value = JSON.stringify({
+            delivery: {
+                title: "Livraison gratuite",
+                description: "Sous 48h dès 50€ d’achat"
+            },
+            warranty: {
+                title: "Garantie 2 ans",
+                description: "Prise en charge constructeur"
+            }
+        });
+    };
 
 
 
 
-// préremplir le form
-const prefillForm = () => {
-    const form = document.querySelector("#productForm");
-    if (!form) return;
-
-    // Champs de base
-    (form.querySelector('input[placeholder="Nom"]') as HTMLInputElement)!.value = "Perceuse à percussion Bosch GSB 13 RE Professional";
-    (form.querySelector('input[placeholder="ID (ex: bosch-gsb-13-re)"]') as HTMLInputElement)!.value = "bosch-gsb-13-re";
-
-    const priceInputs = form.querySelectorAll('input[placeholder="0.00"]') as NodeListOf<HTMLInputElement>;
-    priceInputs[0]!.value = "129.99"; // prix
-    priceInputs[1]!.value = "159.99"; // ancien prix
-
-    (form.querySelector('input[placeholder="25"]') as HTMLInputElement)!.value = "19";
-    (form.querySelector('input[placeholder="Ex: Outillage > Perceuses"]') as HTMLInputElement)!.value = "Outillage > Perceuses";
-    (form.querySelector('input[placeholder="Bosch"]') as HTMLInputElement)!.value = "Bosch";
-
-    // Textareas
-    (form.querySelector('textarea[placeholder*="https://image1.jpg"]') as HTMLTextAreaElement)!.value = JSON.stringify([
-        "https://example.com/images/perceuse1.jpg",
-        "https://example.com/images/perceuse2.jpg"
-    ]);
-
-    (form.querySelector('textarea[placeholder*="Petite description"]') as HTMLTextAreaElement)!.value =
-        "Compacte, puissante et idéale pour les travaux de perçage quotidiens.";
-
-    (form.querySelector('textarea[placeholder*="Texte plus détaillé"]') as HTMLTextAreaElement)!.value =
-        "La perceuse à percussion Bosch GSB 13 RE Professional est conçue pour les artisans exigeants. Dotée d’un moteur de 600W, elle assure un perçage efficace dans le bois, l’acier et la maçonnerie. Son design compact et ergonomique offre une prise en main optimale, même dans les espaces restreints.";
-
-    (form.querySelector('textarea[placeholder*="Puissance"]') as HTMLTextAreaElement)!.value = JSON.stringify({
-        "Puissance": "600W",
-        "Vitesse": "2800 tr/min",
-        "Capacité de perçage (béton)": "13 mm",
-        "Poids": "1.8 kg"
-    });
-
-    (form.querySelector('textarea[placeholder*="Fonction percussion"]') as HTMLTextAreaElement)!.value = JSON.stringify([
-        "Fonction percussion",
-        "Poignée ergonomique",
-        "Contrôle de vitesse",
-        "Mandrin automatique"
-    ]);
-
-    // Sélecteurs
-    form.querySelectorAll("select")[0]!.value = "true"; // En stock
-    form.querySelectorAll("select")[1]!.value = "true"; // Livraison rapide
-
-    (form.querySelector('textarea[placeholder*="Livraison gratuite"]') as HTMLTextAreaElement)!.value = JSON.stringify({
-        delivery: {
-            title: "Livraison gratuite",
-            description: "Sous 48h dès 50€ d’achat"
-        },
-        warranty: {
-            title: "Garantie 2 ans",
-            description: "Prise en charge constructeur"
-        }
-    });
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredProducts = products.filter((product) =>
+        product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleDeleteProduct = (id: number) => {
+
+
+
+
+
+
+
+
+    const handleDeleteProduct = (id: string) => {
         setProducts(products.filter(p => p.id !== id));
     };
+
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -306,11 +323,11 @@ const prefillForm = () => {
                         </svg>
                     </button>
                     <button
-  onClick={prefillForm}
-  className="mb-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-all"
->
-  🪄 Pré-remplir avec un exemple
-</button>
+                        onClick={prefillForm}
+                        className="mb-4 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-all"
+                    >
+                        🪄 Pré-remplir avec un exemple
+                    </button>
 
                 </div>
 
@@ -615,105 +632,137 @@ const prefillForm = () => {
         </div>
     );
 
-    const renderProducts = () => (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold">Gestion des produits</h2>
-                <button
-                    onClick={() => {
-                        setSelectedProduct(null);
-                        setShowProductModal(true);
-                    }}
-                    className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
-                >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nouveau produit
-                </button>
-            </div>
+    const renderProducts = () => {
+        const filteredProducts = products.filter((product: any) =>
+            product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.category?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
-            <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-1">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Rechercher un produit..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+        return (
+            <div className="space-y-6 animate-fade-in">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <h2 className="text-2xl font-bold">Gestion des produits</h2>
+                    <button
+                        onClick={() => {
+                            setSelectedProduct(null);
+                            setShowProductModal(true);
+                        }}
+                        className="flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+                    >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nouveau produit
+                    </button>
                 </div>
-                <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filtres
-                </button>
-            </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="text-left py-4 px-6 font-medium text-gray-600">Produit</th>
-                                <th className="text-left py-4 px-6 font-medium text-gray-600">Prix</th>
-                                <th className="text-left py-4 px-6 font-medium text-gray-600">Stock</th>
-                                <th className="text-left py-4 px-6 font-medium text-gray-600">Catégorie</th>
-                                <th className="text-left py-4 px-6 font-medium text-gray-600">Statut</th>
-                                <th className="text-left py-4 px-6 font-medium text-gray-600">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredProducts.map((product) => (
-                                <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
-                                    <td className="py-4 px-6">
-                                        <div className="flex items-center">
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center mr-3 text-lg">
-                                                {product.image}
-                                            </div>
-                                            <span className="font-medium">{product.name}</span>
-                                        </div>
-                                    </td>
-                                    <td className="py-4 px-6 font-medium">€{product.price}</td>
-                                    <td className="py-4 px-6">
-                                        <span className={`font-medium ${product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
-                                            {product.stock}
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-6">{product.category}</td>
-                                    <td className="py-4 px-6">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status)}`}>
-                                            {product.status}
-                                        </span>
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        <div className="flex gap-2">
-                                            <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200">
-                                                <Eye className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedProduct(product);
-                                                    setShowProductModal(true);
-                                                }}
-                                                className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors duration-200"
-                                            >
-                                                <Edit className="w-4 h-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteProduct(product.id)}
-                                                className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </td>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Rechercher un produit..."
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        <Filter className="w-4 h-4 mr-2" />
+                        Filtres
+                    </button>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-600">Produit</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-600">Prix</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-600">Stock</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-600">Catégorie</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-600">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filteredProducts.map((product: any) => (
+                                    <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center">
+                                                <div
+                                                    className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 mr-3 flex items-center justify-center cursor-pointer group"
+                                                    onClick={() => setPreviewImage(product.image?.[0] || '')}
+                                                >
+                                                    <img
+                                                        src={product.image?.[0] || '/placeholder.png'}
+                                                        alt={product.name}
+                                                        className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-125"
+                                                    />
+                                                </div>
+
+                                                <span className="font-medium">{product.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-6 font-medium">€{product.price}</td>
+                                        <td className="py-4 px-6">
+                                            <span className={`font-medium ${product.stock && product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
+                                                {product.stock ?? '—'}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-6">{product.category || '—'}</td>
+                                        <td className="py-4 px-6">
+                                            <div className="flex gap-2">
+                                                <button className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200">
+                                                    <Eye className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedProduct(product);
+                                                        setShowProductModal(true);
+                                                    }}
+                                                    className="p-1 text-green-600 hover:bg-green-100 rounded transition-colors duration-200"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDeleteProduct(product.id)}
+                                                    className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {filteredProducts.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="text-center text-gray-500 py-10">
+                                            Aucun produit trouvé.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+                {previewImage && (
+                    <div
+                        className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center"
+                        onClick={() => setPreviewImage(null)}
+                    >
+                        <img
+                            src={previewImage}
+                            alt="Aperçu"
+                            className="max-w-[90vw] max-h-[90vh] rounded-xl shadow-xl border-4 border-white"
+                        />
+                    </div>
+                )}
+
             </div>
-        </div>
-    );
+        );
+    };
+
+
 
     const renderOrders = () => (
         <div className="space-y-6 animate-fade-in">
