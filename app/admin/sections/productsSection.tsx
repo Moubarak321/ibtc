@@ -12,7 +12,7 @@ interface Product {
     stock: number;
     category: string;
     status: string;
-    image: string[];
+    images: string[];
     oldPrice?: number;
     discount?: number;
     brand?: string;
@@ -58,7 +58,7 @@ const ProductsSection = () => {
                     stock: data.stock || 0,
                     category: data.category || '',
                     status: data.status || 'Actif',
-                    image: Array.isArray(data.images) ? data.images : ['📦'],
+                    images: Array.isArray(data.images) ? data.images : ['📦'],
                     oldPrice: data.oldPrice || 0,
                     discount: data.discount || 0,
                     brand: data.brand || '',
@@ -282,16 +282,16 @@ const ProductsSection = () => {
                                             <div className="flex items-center">
                                                 <div
                                                     className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 mr-3 flex items-center justify-center cursor-pointer group"
-                                                    onClick={() => setPreviewImage(product.image?.[0] || '')}
+                                                    onClick={() => setPreviewImage(product.images?.[0] || '')}
                                                 >
-                                                    {product.image[0].startsWith('http') ? (
+                                                    {product.images[0].startsWith('http') ? (
                                                         <img
-                                                            src={product.image[0]}
+                                                            src={product.images[0]}
                                                             alt={product.name}
                                                             className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-125"
                                                         />
                                                     ) : (
-                                                        <span className="text-2xl">{product.image[0]}</span>
+                                                        <span className="text-2xl">{product.images[0]}</span>
                                                     )}
                                                 </div>
                                                 <span className="font-medium">{product.name}</span>
@@ -313,7 +313,7 @@ const ProductsSection = () => {
                                             <div className="flex gap-2">
                                                 <button
                                                     className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200"
-                                                    onClick={() => setPreviewImage(product.image?.[0] || '')}
+                                                    onClick={() => setPreviewImage(product.images?.[0] || '')}
                                                     disabled={isLoading}
                                                 >
                                                     <Eye className="w-4 h-4" />
