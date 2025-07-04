@@ -37,7 +37,20 @@ const MarketplacePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-
+const CATEGORIES_LIST = [
+  "Matériaux de structure",
+  "Matériaux de revêtement",
+  "Matériaux d'isolation",
+  "Matériaux de couverture",
+  "Matériaux de plomberie",
+  "Matériaux électriques",
+  "Matériaux de finition",
+  "Matériaux de menuiserie",
+  "Matériaux de sécurité",
+  "Matériaux de décoration",
+  "Équipements et outillage",
+  "BTIC Bio Nature"
+];
 
   // Récupération des produits depuis Firebase
   // Récupération des produits depuis Firebase avec mise à jour en temps réel
@@ -139,15 +152,44 @@ useEffect(() => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  
+  // Helper function to assign icons (vous pouvez personnaliser ce mapping)
+function getIconForCategory(category: string) {
+  switch(category) {
+    case 'Matériaux de structure': return Home;
+    case 'Matériaux de revêtement': return Wrench;
+    case 'Matériaux d\'isolation': return Wrench;
+    case 'Matériaux de couverture': return Home;
+    case 'Matériaux de plomberie': return Wrench;
+    case 'Matériaux électriques': return Monitor;
+    case 'Matériaux de finition': return Wrench;
+    case 'Matériaux de menuiserie': return Wrench;
+    case 'Matériaux de sécurité': return Wrench;
+    case 'Matériaux de décoration': return Tag;
+    case 'Équipements et outillage': return Wrench;
+    case 'BTIC Bio Nature': return Tag;
+    default: return Package;
+  }
+}
+
+// Fonction helper pour normaliser les IDs de catégorie
+const normalizeCategory = (category: string) => 
+    category.toLowerCase().replace(/\s+/g, '-');
 
   const categories = [
-    { id: 'all', name: 'Tous les produits', icon: Package, count: products.length },
-    { id: 'btp', name: 'BTP & Construction', icon: Home, count: products.filter(p => p.category === 'btp').length },
-    { id: 'quincaillerie', name: 'Quincaillerie', icon: Wrench, count: products.filter(p => p.category === 'quincaillerie').length },
-    { id: 'informatique', name: 'Matériel Informatique', icon: Monitor, count: products.filter(p => p.category === 'informatique').length },
-    { id: 'commerce', name: 'Commerce Général', icon: Tag, count: products.filter(p => p.category === 'commerce').length }
-  ];
+    { 
+        id: 'all', 
+        name: 'Tous les produits', 
+        icon: Package, 
+        count: products.length 
+    },
+    ...CATEGORIES_LIST.map(cat => ({
+        id: normalizeCategory(cat), // Utilisation de la fonction helper
+        name: cat,
+        icon: getIconForCategory(cat),
+        count: products.filter(p => normalizeCategory(p.category) === normalizeCategory(cat)).length
+    }))
+];
+
 
   // Filtrage et tri des produits
   const filteredProducts = useMemo(() => {
@@ -155,13 +197,16 @@ useEffect(() => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.subcategory.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+      
+      // Modification ici pour gérer les nouveaux IDs de catégorie
+const matchesCategory = selectedCategory === 'all' || 
+                      normalizeCategory(product.category) === normalizeCategory(selectedCategory);
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
       
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
-    // Tri
+    // (Le reste du code reste inchangé)
     switch (sortBy) {
       case 'price-low':
         filtered.sort((a, b) => a.price - b.price);
@@ -180,7 +225,7 @@ useEffect(() => {
     }
 
     return filtered;
-  }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
+}, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
   const toggleFavorite = (productId: unknown) => {
     setFavorites(prev => {
