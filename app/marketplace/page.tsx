@@ -405,6 +405,30 @@ const matchesCategory = selectedCategory === 'all' ||
     </div>
   );
 
+
+  // Pagination logic
+  const [currentPage, setCurrentPage] = useState(1);
+const productsPerPage = 9;
+
+const paginatedProducts = useMemo(() => {
+  const start = (currentPage - 1) * productsPerPage;
+  return filteredProducts.slice(start, start + productsPerPage);
+}, [filteredProducts, currentPage]);
+
+const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+const handleNextPage = () => {
+  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+};
+
+const handlePrevPage = () => {
+  setCurrentPage((prev) => Math.max(prev - 1, 1));
+};
+
+const handlePageClick = (page: number) => {
+  setCurrentPage(page);
+};
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Carousel Header */}
@@ -727,9 +751,9 @@ const matchesCategory = selectedCategory === 'all' ||
                   ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
                   : 'grid-cols-1'
               }`}>
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                {paginatedProducts.map((product) => (
+  <ProductCard key={product.id} product={product} />
+))}
               </div>
             ) : (
               <div className="text-center py-16">
@@ -753,6 +777,42 @@ const matchesCategory = selectedCategory === 'all' ||
               </div>
             )
           }
+
+{/* pagination suite */}
+          {totalPages > 1 && (
+  <div className="flex justify-center mt-10 gap-2">
+    <button
+      onClick={handlePrevPage}
+      disabled={currentPage === 1}
+      className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+    >
+      Précédent
+    </button>
+
+    {[...Array(totalPages)].map((_, i) => (
+      <button
+        key={i + 1}
+        onClick={() => handlePageClick(i + 1)}
+        className={`px-4 py-2 rounded-lg ${
+          currentPage === i + 1
+            ? 'bg-blue-600 text-white' 
+            : 'bg-gray-100 hover:bg-gray-200'
+        }`}
+      >
+        {i + 1}
+      </button>
+    ))}
+
+    <button
+      onClick={handleNextPage}
+      disabled={currentPage === totalPages}
+      className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+    >
+      Suivant
+    </button>
+  </div>
+)}
+
                       
                     </div>
                   </div>
