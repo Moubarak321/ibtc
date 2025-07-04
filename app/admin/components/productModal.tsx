@@ -529,6 +529,7 @@
 
 
 
+
 "use client";
 import React, { useRef, useEffect, useState } from 'react';
 
@@ -552,6 +553,21 @@ const ProductModal: React.FC<ProductModalProps> = ({
         delivery: { title: '', description: '' },
         warranty: { title: '', description: '' }
     });
+
+    const CATEGORIES = [
+        "Matériaux de structure",
+        "Matériaux de revêtement",
+        "Matériaux d'isolation",
+        "Matériaux de couverture",
+        "Matériaux de plomberie",
+        "Matériaux électriques",
+        "Matériaux de finition",
+        "Matériaux de menuiserie",
+        "Matériaux de sécurité",
+        "Matériaux de décoration",
+        "Équipements et outillage",
+        "BTIC Bio Nature"
+    ].sort();
 
     // Controlled input states
     const [name, setName] = useState('');
@@ -835,14 +851,19 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         {/* Catégorie */}
                         <div className="space-y-1">
                             <label className="block text-sm font-medium text-gray-700">Catégorie *</label>
-                            <input
-                                type="text"
+                            <select
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                placeholder="Ex: Outillage > Perceuses"
                                 required
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
-                            />
+                            >
+                                <option value="">Sélectionnez une catégorie</option>
+                                {CATEGORIES.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         {/* Marque */}
