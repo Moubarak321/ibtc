@@ -59,7 +59,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent w-16 h-16">
             <a href="/">
-              <img src="/images/Logo_btic 1.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src="/images/Logo1.png" alt="Logo" className="w-full h-full object-contain" />
             </a>
           </div>
 

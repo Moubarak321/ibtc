@@ -564,6 +564,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     const [shortDescription, setShortDescription] = useState('');
     const [longDescription, setLongDescription] = useState('');
     const [inStock, setInStock] = useState(true);
+    const [vedette, setVedette] = useState(true);
     const [fastDelivery, setFastDelivery] = useState(false);
 
     // Gestion des images
@@ -623,7 +624,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 name: name.trim(),
                 id: productId.trim(),
                 price: parseFloat(price) || 0,
-                oldPrice: parseFloat(oldPrice) || 0,
+                oldPrice: parseFloat(oldPrice) || '',
                 discount: parseInt(discount) || 0,
                 category: category.trim(),
                 brand: brand.trim(),
@@ -636,6 +637,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 }, {} as Record<string, string>),
                 features: features.filter(f => f.trim() !== ''),
                 inStock,
+                vedette,
                 fastDelivery,
                 services,
                 updatedAt: new Date(),
@@ -664,6 +666,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             setShortDescription(selectedProduct.shortDescription || '');
             setLongDescription(selectedProduct.longDescription || '');
             setInStock(selectedProduct.inStock !== false);
+            setVedette(selectedProduct.vedette !== false);
             setFastDelivery(selectedProduct.fastDelivery === true);
 
             // Initialisation des images
@@ -716,6 +719,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             setShortDescription('');
             setLongDescription('');
             setInStock(true);
+            setVedette(true);
             setFastDelivery(false);
             setImages(['']);
             setFeatures(['']);
@@ -863,6 +867,19 @@ const ProductModal: React.FC<ProductModalProps> = ({
                             >
                                 <option value="true">En stock</option>
                                 <option value="false">En rupture</option>
+                            </select>
+                        </div>
+
+                        {/* vedette */}
+                        <div className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">Vedette</label>
+                            <select
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                value={vedette ? 'true' : 'false'}
+                                onChange={(e) => setVedette(e.target.value === 'true')}
+                            >
+                                <option value="true">Oui</option>
+                                <option value="false">Non</option>
                             </select>
                         </div>
 

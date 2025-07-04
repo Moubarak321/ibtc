@@ -2,6 +2,26 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Filter, Grid, List, Star, Heart, ShoppingCart, Eye, ChevronDown, Tag, Package, Wrench, Monitor, Home, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import Link from 'next/link';
+import { getFirestore, collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { app } from '@/lib/firebase/config'; // Assurez-vous d'avoir ce fichier de configuration
+interface Product {
+  id: string; // Firebase uses string IDs
+  name: string;
+  subcategory: string;
+  category: string;
+  brand?: string;
+  shortDescription?: string;
+  price: number;
+  oldPrice?: number;
+  images: string[];
+  rating: number;
+  reviews: number;
+  inStock: boolean;
+  vedette: boolean;
+  featured: boolean;
+  description: string;
+  seller: string;
+}
 
 const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +34,52 @@ const MarketplacePage = () => {
   const [cart, setCart] = useState(new Set());
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSearchFixed, setIsSearchFixed] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+
+
+  // Récupération des produits depuis Firebase
+  // Récupération des produits depuis Firebase avec mise à jour en temps réel
+useEffect(() => {
+  const db = getFirestore(app);
+  const productsCollection = collection(db, 'products');
+  
+  // Abonnement aux mises à jour en temps réel
+  const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
+    try {
+      const productsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name || '',
+        category: doc.data().category || '',
+        subcategory: doc.data().subcategory || '',
+        price: doc.data().price || 0,
+        oldPrice: doc.data().oldPrice || '',
+        images: Array.isArray(doc.data().images) ? doc.data().images : ['📦'],
+        rating: doc.data().rating || 0,
+        reviews: doc.data().reviews || 0,
+        inStock: doc.data().inStock !== undefined ? doc.data().inStock : true,
+        vedette: doc.data().vedette || false,
+        featured: doc.data().featured || false,
+        description: doc.data().description || '',
+        seller: doc.data().seller || '',
+        brand: doc.data().brand || '',
+        shortDescription: doc.data().shortDescription || '',
+        discount: doc.data().discount || 0,
+      }));
+
+      setProducts(productsData);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Erreur lors du traitement des données:", error);
+      setIsLoading(false);
+    }
+  });
+
+  // Nettoyage de l'abonnement lors du démontage du composant
+  return () => unsubscribe();
+}, []);
+
 
   // Données du carousel
   const carouselSlides = [
@@ -73,123 +139,7 @@ const MarketplacePage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Données des produits
-  const products = [
-    {
-      id: 1,
-      name: "Ciment Portland CEM II/A-L 42,5 R",
-      category: "btp",
-      subcategory: "Matériaux de construction",
-      price: 55000,
-      originalPrice: 65000,
-      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop",
-      rating: 4.8,
-      reviews: 124,
-      inStock: true,
-      featured: true,
-      description: "Ciment haute performance pour tous vos travaux de construction",
-      seller: "BTP Pro Sarl"
-    },
-    {
-      id: 2,
-      name: "Perceuse à percussion Bosch GSB 13 RE",
-      category: "quincaillerie",
-      subcategory: "Outils électriques",
-      price: 85000,
-      image: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=400&h=300&fit=crop",
-      rating: 4.6,
-      reviews: 89,
-      inStock: true,
-      featured: false,
-      description: "Perceuse professionnelle avec fonction percussion",
-      seller: "Outils & Cie"
-    },
-    {
-      id: 3,
-      name: "Laptop HP Pavilion 15.6\" i5 8GB RAM",
-      category: "informatique",
-      subcategory: "Ordinateurs",
-      price: 450000,
-      image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop",
-      rating: 4.5,
-      reviews: 67,
-      inStock: true,
-      featured: true,
-      description: "Ordinateur portable performant pour bureau et usage personnel",
-      seller: "Tech Solutions"
-    },
-    {
-      id: 4,
-      name: "Carrelage Grès Cérame 60x60cm",
-      category: "btp",
-      subcategory: "Revêtements",
-      price: 12500,
-      originalPrice: 15000,
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-      rating: 4.7,
-      reviews: 156,
-      inStock: true,
-      featured: false,
-      description: "Carrelage premium résistant et élégant",
-      seller: "Déco Plus"
-    },
-    {
-      id: 5,
-      name: "Clés à molette professionnelle Set 5 pièces",
-      category: "quincaillerie",
-      subcategory: "Outils manuels",
-      price: 25000,
-      image: "https://images.unsplash.com/photo-1609205807107-e8ec2120f9de?w=400&h=300&fit=crop",
-      rating: 4.9,
-      reviews: 203,
-      inStock: true,
-      featured: false,
-      description: "Set complet de clés professionnelles haute qualité",
-      seller: "Pro Tools"
-    },
-    {
-      id: 6,
-      name: "Imprimante Canon PIXMA TS3350",
-      category: "informatique",
-      subcategory: "Périphériques",
-      price: 75000,
-      image: "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=400&h=300&fit=crop",
-      rating: 4.3,
-      reviews: 91,
-      inStock: false,
-      featured: false,
-      description: "Imprimante multifonction WiFi couleur",
-      seller: "Bureau Tech"
-    },
-    {
-      id: 7,
-      name: "Peinture Acrylique Matte 15L Blanc",
-      category: "btp",
-      subcategory: "Peintures",
-      price: 35000,
-      image: "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=400&h=300&fit=crop",
-      rating: 4.4,
-      reviews: 78,
-      inStock: true,
-      featured: true,
-      description: "Peinture haute couvrance pour intérieur et extérieur",
-      seller: "Color Pro"
-    },
-    {
-      id: 8,
-      name: "Sac de Riz Jasmin Premium 25kg",
-      category: "commerce",
-      subcategory: "Alimentation",
-      price: 18000,
-      image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=300&fit=crop",
-      rating: 4.6,
-      reviews: 234,
-      inStock: true,
-      featured: false,
-      description: "Riz jasmin de qualité supérieure",
-      seller: "Agro Market"
-    }
-  ];
+  
 
   const categories = [
     { id: 'all', name: 'Tous les produits', icon: Package, count: products.length },
@@ -230,7 +180,7 @@ const MarketplacePage = () => {
     }
 
     return filtered;
-  }, [searchTerm, selectedCategory, priceRange, sortBy]);
+  }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
   const toggleFavorite = (productId: unknown) => {
     setFavorites(prev => {
@@ -286,41 +236,46 @@ const MarketplacePage = () => {
   };
 
   type Product = {
-    id: number;
+    id: string;
     name: string;
     category: string;
     subcategory: string;
     price: number;
-    originalPrice?: number;
-    image: string;
+    oldPrice?: number;
+    images: string[];
     rating: number;
     reviews: number;
     inStock: boolean;
     featured: boolean;
     description: string;
     seller: string;
+    brand?: string;
+  shortDescription?: string;
+    discount?: number;
+    vedette?:boolean;
+
   };
 
-  const ProductCard = ({ product }: { product: Product }) => (
+   const ProductCard = ({ product }: { product: Product }) => (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200">
       {/* Image Container */}
       <div className="relative overflow-hidden">
         <img 
-          src={product.image} 
+          src={product.images[0]} 
           alt={product.name}
           className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
         />
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.featured && (
+          {product.vedette && (
             <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold animate-pulse">
               ⭐ Vedette
             </span>
           )}
-          {product.originalPrice && (
+          {product.oldPrice && (
             <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              -{Math.round((1 - product.price / product.originalPrice) * 100)}%
+              -{Math.round((1 - product.price / product.oldPrice) * 100)}%
             </span>
           )}
           {!product.inStock && (
@@ -352,7 +307,7 @@ const MarketplacePage = () => {
       <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
-            {product.subcategory}
+            {product.category}
           </span>
           <div className="flex items-center gap-1">
             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
@@ -366,7 +321,7 @@ const MarketplacePage = () => {
         </h3>
         </Link>
         
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.shortDescription}</p>
         
         <div className="flex items-center justify-between mb-3">
           <div className="flex flex-col">
@@ -375,15 +330,17 @@ const MarketplacePage = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-blue-600">{formatPrice(product.price)}</span>
-              {product.originalPrice && (
-                <span className="text-sm text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
-              )}
+              {product.oldPrice !== null && product.oldPrice !== undefined && product.oldPrice > 0 ? (
+  <span className="text-sm text-gray-400 line-through">
+    {formatPrice(product.oldPrice)}
+  </span>
+) : null}
             </div>
           </div>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">Vendu par {product.seller}</span>
+          <span className="text-xs text-gray-500">Marque : {product.brand}</span>
           <button
             onClick={() => toggleCart(product.id)}
             disabled={!product.inStock}
@@ -713,7 +670,13 @@ const MarketplacePage = () => {
             </div>
 
             {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <span className="loading loading-spinner loading-lg text-primary"></span>
+              <span className="ml-2">Chargement des produits...</span>
+            </div>
+          ) : 
+            filteredProducts.length > 0 ? (
               <div className={`grid gap-6 ${
                 viewMode === 'grid' 
                   ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
@@ -743,10 +706,12 @@ const MarketplacePage = () => {
                   Réinitialiser les filtres
                 </button>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
+            )
+          }
+                      
+                    </div>
+                  </div>
+                </div>
 
       <style jsx>{`
         .line-clamp-2 {
@@ -838,9 +803,14 @@ export default MarketplacePage;
 
 
 
+
+
+
+
 // "use client";
 // import React, { useState, useEffect, useMemo } from 'react';
 // import { Search, Filter, Grid, List, Star, Heart, ShoppingCart, Eye, ChevronDown, Tag, Package, Wrench, Monitor, Home, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+// import Link from 'next/link';
 
 // const MarketplacePage = () => {
 //   const [searchTerm, setSearchTerm] = useState('');
@@ -920,7 +890,7 @@ export default MarketplacePage;
 //       category: "btp",
 //       subcategory: "Matériaux de construction",
 //       price: 55000,
-//       originalPrice: 65000,
+//       oldPrice: 65000,
 //       image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop",
 //       rating: 4.8,
 //       reviews: 124,
@@ -1095,6 +1065,19 @@ export default MarketplacePage;
 //     });
 //   };
 
+//   // Animation pour le panier quand un produit est ajouté/retiré
+//   useEffect(() => {
+//     if (cart.size > 0) {
+//       const cartIcon = document.querySelector('.cart-pulse');
+//       if (cartIcon) {
+//         cartIcon.classList.add('animate-pulse');
+//         setTimeout(() => {
+//           cartIcon.classList.remove('animate-pulse');
+//         }, 1000);
+//       }
+//     }
+//   }, [cart.size]);
+
 //   const nextSlide = () => {
 //     setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
 //   };
@@ -1186,10 +1169,11 @@ export default MarketplacePage;
 //             <span className="text-xs text-gray-400">({product.reviews})</span>
 //           </div>
 //         </div>
-
+//         <Link href="/marketplace/details">
 //         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
 //           {product.name}
 //         </h3>
+//         </Link>
         
 //         <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
         
@@ -1214,14 +1198,14 @@ export default MarketplacePage;
 //             disabled={!product.inStock}
 //             className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 ${
 //               cart.has(product.id)
-//                 ? 'bg-green-500 text-white'
+//                 ? 'bg-red-500 text-white'
 //                 : product.inStock
 //                 ? 'bg-blue-600 text-white hover:bg-blue-700'
 //                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
 //             }`}
 //           >
 //             <ShoppingCart className="w-4 h-4" />
-//             {cart.has(product.id) ? 'Ajouté' : product.inStock ? 'Ajouter' : 'Indisponible'}
+//             {cart.has(product.id) ? 'Retirer' : product.inStock ? 'Ajouter' : 'Indisponible'}
 //           </button>
 //         </div>
 //       </div>
@@ -1295,7 +1279,7 @@ export default MarketplacePage;
 //         >
 //           <ChevronRight className="w-6 h-6" />
 //         </button>
-
+// .
 //         {/* Dots Indicator */}
 //         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
 //           {carouselSlides.map((_, index) => (
@@ -1334,19 +1318,58 @@ export default MarketplacePage;
 //               <h2 className="text-xl font-bold text-gray-900">Marketplace</h2>
 //             </div>
             
-//             <div className="relative lg:w-96 flex-1 lg:flex-none mx-4">
-//               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-//               <input
-//                 type="text"
-//                 placeholder="Rechercher un produit..."
-//                 value={searchTerm}
-//                 onChange={(e) => setSearchTerm(e.target.value)}
-//                 className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${
+//             <div className="flex items-center gap-3 flex-1 lg:flex-none">
+//               <div className="relative lg:w-96 flex-1 lg:flex-none">
+//                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+//                 <input
+//                   type="text"
+//                   placeholder="Rechercher un produit..."
+//                   value={searchTerm}
+//                   onChange={(e) => setSearchTerm(e.target.value)}
+//                   className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${
+//                     isSearchFixed 
+//                       ? 'bg-white border-gray-200 shadow-sm' 
+//                       : 'bg-white/90 backdrop-blur-sm border-white/50'
+//                   }`}
+//                 />
+//               </div>
+
+//               {/* Cart Icon */}
+//               <div className="relative">
+//                 <button className={`relative p-3 rounded-xl transition-all duration-300 hover:scale-110 group cart-pulse ${
 //                   isSearchFixed 
-//                     ? 'bg-white border-gray-200 shadow-sm' 
-//                     : 'bg-white/90 backdrop-blur-sm border-white/50'
-//                 }`}
-//               />
+//                     ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
+//                     : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/50'
+//                 }`}>
+//                   <ShoppingCart className="w-6 h-6" />
+                  
+//                   {/* Cart Badge */}
+//                   {cart.size > 0 && (
+//                     <div className={`absolute -top-2 -right-2 min-w-[20px] h-5 rounded-full flex items-center justify-center text-xs font-bold animate-bounce ${
+//                       isSearchFixed 
+//                         ? 'bg-orange-500 text-white' 
+//                         : 'bg-red-500 text-white'
+//                     }`}>
+//                       {cart.size}
+//                     </div>
+//                   )}
+                  
+//                   {/* Pulse Animation when items added */}
+//                   {cart.size > 0 && (
+//                     <div className={`absolute inset-0 rounded-xl animate-ping ${
+//                       isSearchFixed 
+//                         ? 'bg-blue-600' 
+//                         : 'bg-white'
+//                     } opacity-20`} />
+//                   )}
+//                 </button>
+
+//                 {/* Cart Tooltip */}
+//                 <div className="absolute top-full mt-2 right-0 bg-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50">
+//                   {cart.size === 0 ? 'Panier vide' : `${cart.size} article${cart.size > 1 ? 's' : ''} dans le panier`}
+//                   <div className="absolute -top-1 right-4 w-2 h-2 bg-gray-900 rotate-45" />
+//                 </div>
+//               </div>
 //             </div>
 
 //             <div className={`transition-all duration-500 ${
@@ -1560,6 +1583,36 @@ export default MarketplacePage;
 //           cursor: pointer;
 //           border: none;
 //           box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+//         }
+
+//         @keyframes fade-in-up {
+//           from {
+//             opacity: 0;
+//             transform: translateY(30px);
+//           }
+//           to {
+//             opacity: 1;
+//             transform: translateY(0);
+//           }
+//         }
+
+//         .animate-fade-in-up {
+//           animation: fade-in-up 0.8s ease-out forwards;
+//         }
+
+//         .animation-delay-200 {
+//           animation-delay: 0.2s;
+//           opacity: 0;
+//         }
+
+//         .animation-delay-400 {
+//           animation-delay: 0.4s;
+//           opacity: 0;
+//         }
+
+//         .animation-delay-600 {
+//           animation-delay: 0.6s;
+//           opacity: 0;
 //         }
 //       `}</style>
 //     </div>

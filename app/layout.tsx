@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'BTIC' }],
   creator: 'BTIC',
   icons: {
-    icon: '/Logo2.png', // ou /favicon.png, /logo.svg selon ton fichier
+    icon: '/images/Logo2.png', // ou /favicon.png, /logo.svg selon ton fichier
   },
   // openGraph: {
   //   title: 'Multi-Services Enterprise',

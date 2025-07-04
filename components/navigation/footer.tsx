@@ -13,7 +13,7 @@ const Footer = () => {
           {/* Company Info */}
           <div>
             <div className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4 w-20 h-15">
-              <img src="/images/Logo_btic 2.png" alt="Logo"  />
+              <img src="/images/Logo2.png" alt="Logo"  />
             </div>
             <p className="text-gray-300 mb-6">
               Votre partenaire multi-services pour transformer vos idées en succès concrets.

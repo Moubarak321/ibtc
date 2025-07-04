@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react';
-import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { app } from '@/lib/firebase/config';
 import ProductModal from '../components/productModal';
 
@@ -21,6 +21,7 @@ interface Product {
     specifications?: Record<string, string>;
     features?: string[];
     inStock?: boolean;
+    vedette?: boolean;
     fastDelivery?: boolean;
     services?: {
         delivery: {
@@ -42,52 +43,54 @@ const ProductsSection = () => {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [showProductModal, setShowProductModal] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const fetchProducts = async () => {
-        setIsLoading(true);
-        try {
-            const db = getFirestore(app);
-            const snapshot = await getDocs(collection(db, "products"));
-            const productList = snapshot.docs.map((doc) => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    name: data.name || '',
-                    price: data.price || 0,
-                    stock: data.stock || 0,
-                    category: data.category || '',
-                    status: data.status || 'Actif',
-                    images: Array.isArray(data.images) ? data.images : ['📦'],
-                    oldPrice: data.oldPrice || 0,
-                    discount: data.discount || 0,
-                    brand: data.brand || '',
-                    shortDescription: data.shortDescription || '',
-                    longDescription: data.longDescription || '',
-                    specifications: data.specifications || {},
-                    features: data.features || [],
-                    inStock: data.inStock ?? true,
-                    fastDelivery: data.fastDelivery ?? false,
-                    services: data.services || {
-                        delivery: { title: '', description: '' },
-                        warranty: { title: '', description: '' }
-                    },
-                    createdAt: data.createdAt?.toDate() || new Date(),
-                    updatedAt: data.updatedAt?.toDate() || new Date()
-                };
-            });
-            setProducts(productList);
-        } catch (error) {
-            console.error("Erreur lors du chargement des produits:", error);
-            alert("Une erreur est survenue lors du chargement des produits");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
+  const db = getFirestore(app);
+  const productsCollection = collection(db, 'products');
+  
+  // Abonnement aux mises à jour en temps réel
+  const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
+    try {
+      const productList = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data.name || '',
+          price: data.price || 0,
+          stock: data.stock || 0,
+          category: data.category || '',
+          status: data.status || 'Actif',
+          images: Array.isArray(data.images) ? data.images : ['📦'],
+          oldPrice: data.oldPrice || '',
+          discount: data.discount || 0,
+          brand: data.brand || '',
+          shortDescription: data.shortDescription || '',
+          longDescription: data.longDescription || '',
+          specifications: data.specifications || {},
+          features: data.features || [],
+          inStock: data.inStock ?? true,
+          vedette: data.vedette ?? false,
+          fastDelivery: data.fastDelivery ?? false,
+          services: data.services || {
+            delivery: { title: '', description: '' },
+            warranty: { title: '', description: '' }
+          },
+          createdAt: data.createdAt?.toDate() || new Date(),
+          updatedAt: data.updatedAt?.toDate() || new Date()
+        };
+      });
+      setProducts(productList);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Erreur lors du chargement des produits:", error);
+      setIsLoading(false);
+    }
+  });
+
+  // Nettoyage de l'abonnement
+  return () => unsubscribe();
+}, []);
 
     const handleSaveProduct = async (productData: {
         name: string;
@@ -103,6 +106,7 @@ const ProductsSection = () => {
         specifications: Record<string, string>;
         features: string[];
         inStock: boolean;
+        vedette: boolean;
         fastDelivery: boolean;
         services: {
             delivery: { title: string; description: string };
@@ -136,7 +140,7 @@ const ProductsSection = () => {
                 name: productData.name.trim(),
                 id: productData.id.trim(),
                 price: Number(productData.price),
-                oldPrice: productData.oldPrice ? Number(productData.oldPrice) : null,
+                oldPrice: productData.oldPrice ? Number(productData.oldPrice) : '',
                 discount: productData.discount ? Number(productData.discount) : 0,
                 category: productData.category.trim(),
                 brand: productData.brand?.trim() || '',
@@ -149,6 +153,7 @@ const ProductsSection = () => {
                 ),
                 features: productData.features.filter(f => f.trim() !== ''),
                 inStock: Boolean(productData.inStock),
+                vedette: Boolean(productData.vedette),
                 fastDelivery: Boolean(productData.fastDelivery),
                 services: {
                     delivery: {
@@ -174,7 +179,6 @@ const ProductsSection = () => {
             }
 
             setShowProductModal(false);
-            fetchProducts(); // Recharge la liste des produits
         } catch (error) {
             console.error("Erreur lors de la sauvegarde:", error);
             alert(`❌ ${error instanceof Error ? error.message : "Une erreur est survenue lors de la sauvegarde"}`);
@@ -190,7 +194,6 @@ const ProductsSection = () => {
         try {
             const db = getFirestore(app);
             await deleteDoc(doc(db, "products", id));
-            setProducts(products.filter(p => p.id !== id));
             alert("✅ Produit supprimé avec succès !");
         } catch (error) {
             console.error("Erreur lors de la suppression:", error);
@@ -270,6 +273,7 @@ const ProductsSection = () => {
                                     <th className="text-left py-4 px-6 font-medium text-gray-600">Produit</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-600">Prix</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-600">Stock</th>
+                                    <th className="text-left py-4 px-6 font-medium text-gray-600">Vedette</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-600">Catégorie</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-600">Statut</th>
                                     <th className="text-left py-4 px-6 font-medium text-gray-600">Actions</th>
@@ -299,10 +303,16 @@ const ProductsSection = () => {
                                         </td>
                                         <td className="py-4 px-6 font-medium">€{product.price.toFixed(2)}</td>
                                         <td className="py-4 px-6">
-                                            <span className={`font-medium ${product.stock && product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
-                                                {product.stock ?? '—'}
+                                            <span className={`font-medium ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
+                                                {product.inStock ? 'Oui' : 'Non'}
                                             </span>
                                         </td>
+                                        <td className="py-4 px-6">
+                                            <span className={`font-medium ${product.vedette ? 'text-green-600' : 'text-red-600'}`}>
+                                                {product.vedette ? 'Oui' : 'Non'}
+                                            </span>
+                                        </td>
+                                        
                                         <td className="py-4 px-6">{product.category || '—'}</td>
                                         <td className="py-4 px-6">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status)}`}>
