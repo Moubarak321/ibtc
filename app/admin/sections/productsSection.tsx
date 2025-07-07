@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react';
 import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
-import { app } from '@/lib/firebase/config';
+import { app } from '@/lib/firebase/client-config';
 import ProductModal from '../components/productModal';
 
 interface Product {

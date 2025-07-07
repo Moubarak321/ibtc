@@ -5,7 +5,7 @@ import { Plus, Search, Edit, Trash2, Eye, Package, ShoppingCart, TrendingUp, Use
 
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { app } from '@/lib/firebase/config';
+import { app } from '@/lib/firebase/client-config';
 
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 

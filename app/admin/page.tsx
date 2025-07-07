@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { app } from '@/lib/firebase/config';
+import { app } from '@/lib/firebase/client-config';
 
 import DashboardSection from './sections/dashboardSection';
 import ProductsSection from './sections/productsSection';
