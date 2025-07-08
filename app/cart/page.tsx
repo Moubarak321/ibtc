@@ -2,33 +2,46 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus, Trash2, ShoppingCart, FileText, User, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
 
+
+interface ProductCartItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  description?: string;
+}
+
 const ModernCartQuote = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Service de Nettoyage Premium",
-      description: "Nettoyage complet de votre domicile",
-      price: 89.99,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Réparation Électronique",
-      description: "Diagnostic et réparation d'appareils",
-      price: 45.50,
-      quantity: 2,
-      image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Cours Particuliers",
-      description: "Cours de mathématiques niveau lycée",
-      price: 35.00,
-      quantity: 1,
-      image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop"
-    }
-  ]);
+  // const [cartItems, setCartItems] = useState([
+  //   {
+  //     id: 1,
+  //     name: "Service de Nettoyage Premium",
+  //     description: "Nettoyage complet de votre domicile",
+  //     price: 89.99,
+  //     quantity: 1,
+  //     image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop"
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Réparation Électronique",
+  //     description: "Diagnostic et réparation d'appareils",
+  //     price: 45.50,
+  //     quantity: 2,
+  //     image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop"
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Cours Particuliers",
+  //     description: "Cours de mathématiques niveau lycée",
+  //     price: 35.00,
+  //     quantity: 1,
+  //     image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop"
+  //   }
+  // ]);
+
+  const [cartItems, setCartItems] = useState<ProductCartItem[]>([]);
+
 
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,21 +57,62 @@ const ModernCartQuote = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const updateQuantity = (id: number, newQuantity: number) => {
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('marketplace-cart-data');
+    if (storedData) {
+      try {
+        const parsed = JSON.parse(storedData);
+        const items: ProductCartItem[] = Object.values(parsed);
+        setCartItems(items);
+      } catch (e) {
+        console.error("Erreur chargement panier :", e);
+      }
+    }
+  }, []);
+
+
+
+  const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
       removeItem(id);
       return;
     }
-    setCartItems(items =>
-      items.map(item =>
+
+    setCartItems(items => {
+      const updated = items.map(item =>
         item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+      );
+
+      // Mise à jour du localStorage
+      const cartData: Record<string, any> = {};
+      updated.forEach(item => {
+        cartData[item.id] = item;
+      });
+      localStorage.setItem('marketplace-cart-data', JSON.stringify(cartData));
+      localStorage.setItem('marketplace-cart', JSON.stringify(updated.map(item => item.id)));
+
+      return updated;
+    });
   };
 
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
+
+  const removeItem = (id: string) => {
+    setCartItems(items => {
+      const updated = items.filter(item => item.id !== id);
+
+      // Mise à jour du localStorage
+      const cartData: Record<string, any> = {};
+      updated.forEach(item => {
+        cartData[item.id] = item;
+      });
+      localStorage.setItem('marketplace-cart-data', JSON.stringify(cartData));
+      localStorage.setItem('marketplace-cart', JSON.stringify(updated.map(item => item.id)));
+
+      return updated;
+    });
   };
+
 
   const getTotalPrice = () => {
     return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -81,7 +135,7 @@ const ModernCartQuote = () => {
       date: new Date().toLocaleDateString('fr-FR'),
       quoteNumber: `DEV-${Date.now()}`
     };
-    
+
     console.log('Génération PDF avec les données:', quoteData);
     return quoteData;
   };
@@ -92,20 +146,20 @@ const ModernCartQuote = () => {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
-    
+
     setIsSubmitting(true);
 
     try {
       // Simulation d'envoi
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       const pdfData = await generatePDF();
-      
+
       // Ici vous intégreriez votre API pour envoyer les données
       console.log('Envoi des données au serveur:', pdfData);
-      
+
       setIsSuccess(true);
-      
+
       // Reset après 3 secondes
       setTimeout(() => {
         setIsSuccess(false);
@@ -121,7 +175,7 @@ const ModernCartQuote = () => {
           message: ''
         });
       }, 3000);
-      
+
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
     } finally {
@@ -141,7 +195,7 @@ const ModernCartQuote = () => {
     );
   }
 
- return (
+  return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header */}
@@ -170,7 +224,7 @@ const ModernCartQuote = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                   </div>
-                  
+
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-gray-800 mb-1">{item.name}</h3>
                     <p className="text-gray-600 text-sm mb-2">{item.description}</p>
@@ -178,7 +232,7 @@ const ModernCartQuote = () => {
                       <span className="text-2xl font-bold text-purple-600">
                         {item.price.toFixed(2)} €
                       </span>
-                      
+
                       <div className="flex items-center gap-3">
                         <div className="flex items-center bg-gray-100 rounded-full p-1">
                           <button
@@ -197,7 +251,7 @@ const ModernCartQuote = () => {
                             <Plus className="w-4 h-4 text-gray-700" />
                           </button>
                         </div>
-                        
+
                         <button
                           onClick={() => removeItem(item.id)}
                           className="p-2 text-red-500 hover:text-red-600 hover:bg-red-100 rounded-full transition-all"
@@ -220,7 +274,7 @@ const ModernCartQuote = () => {
                 <FileText className="w-5 h-5 text-purple-500" />
                 Récapitulatif
               </h2>
-              
+
               <div className="space-y-3 mb-6">
                 {cartItems.map(item => (
                   <div key={item.id} className="flex justify-between text-sm">
@@ -232,7 +286,7 @@ const ModernCartQuote = () => {
                     </span>
                   </div>
                 ))}
-                
+
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-gray-800">Total estimé</span>

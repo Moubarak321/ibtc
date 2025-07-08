@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Filter, Grid, List, Star, Heart, ShoppingCart, Eye, ChevronDown, Tag, Package, Wrench, Monitor, Home, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { Search, Filter, Grid, List, Star, Heart, ShoppingCart, Eye, ChevronDown, Tag, Package, Wrench, Monitor, Home, ChevronLeft, ChevronRight, Play, Link2 } from 'lucide-react';
 import Link from 'next/link';
 import { getFirestore, collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { app } from '@/lib/firebase/client-config'; // Assurez-vous d'avoir ce fichier de configuration
+import { useRouter } from 'next/navigation';
 interface Product {
   id: string; // Firebase uses string IDs
   name: string;
@@ -22,7 +23,7 @@ interface Product {
   description: string;
   seller: string;
 }
-
+// XCRCGFv9
 const MarketplacePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -31,67 +32,98 @@ const MarketplacePage = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState(new Set());
-  const [cart, setCart] = useState(new Set());
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSearchFixed, setIsSearchFixed] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const [cartCount, setCartCount] = useState(0);
 
-const CATEGORIES_LIST = [
-  "Matériaux de structure",
-  "Matériaux de revêtement",
-  "Matériaux d'isolation",
-  "Matériaux de couverture",
-  "Matériaux de plomberie",
-  "Matériaux électriques",
-  "Matériaux de finition",
-  "Matériaux de menuiserie",
-  "Matériaux de sécurité",
-  "Matériaux de décoration",
-  "Équipements et outillage",
-  "BTIC Bio Nature"
-];
+  const [cart, setCart] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const saved = localStorage.getItem('marketplace-cart');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setCart(new Set(parsed));
+      } catch (e) {
+        console.error('Erreur de parsing du panier', e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('marketplace-cart', JSON.stringify(Array.from(cart)));
+  }, [cart]);
+
+
+
+  useEffect(() => {
+  const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
+  const totalQuantity = Object.values(cartData).reduce((sum, item: any) => {
+    return sum + (item.quantity || 1);
+  }, 0);
+  setCartCount(Number(totalQuantity));
+}, [cart]);
+
+
+
+  const CATEGORIES_LIST = [
+    "Matériaux de structure",
+    "Matériaux de revêtement",
+    "Matériaux d'isolation",
+    "Matériaux de couverture",
+    "Matériaux de plomberie",
+    "Matériaux électriques",
+    "Matériaux de finition",
+    "Matériaux de menuiserie",
+    "Matériaux de sécurité",
+    "Matériaux de décoration",
+    "Équipements et outillage",
+    "BTIC Bio Nature"
+  ];
 
   // Récupération des produits depuis Firebase
   // Récupération des produits depuis Firebase avec mise à jour en temps réel
-useEffect(() => {
-  const db = getFirestore(app);
-  const productsCollection = collection(db, 'products');
-  
-  // Abonnement aux mises à jour en temps réel
-  const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
-    try {
-      const productsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        name: doc.data().name || '',
-        category: doc.data().category || '',
-        subcategory: doc.data().subcategory || '',
-        price: doc.data().price || 0,
-        oldPrice: doc.data().oldPrice || '',
-        images: Array.isArray(doc.data().images) ? doc.data().images : ['📦'],
-        rating: doc.data().rating || 0,
-        reviews: doc.data().reviews || 0,
-        inStock: doc.data().inStock !== undefined ? doc.data().inStock : true,
-        vedette: doc.data().vedette || false,
-        featured: doc.data().featured || false,
-        description: doc.data().description || '',
-        seller: doc.data().seller || '',
-        brand: doc.data().brand || '',
-        shortDescription: doc.data().shortDescription || '',
-        discount: doc.data().discount || 0,
-      }));
+  useEffect(() => {
+    const db = getFirestore(app);
+    const productsCollection = collection(db, 'products');
 
-      setProducts(productsData);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erreur lors du traitement des données:", error);
-      setIsLoading(false);
-    }
-  });
+    // Abonnement aux mises à jour en temps réel
+    const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
+      try {
+        const productsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          name: doc.data().name || '',
+          category: doc.data().category || '',
+          subcategory: doc.data().subcategory || '',
+          price: doc.data().price || 0,
+          oldPrice: doc.data().oldPrice || '',
+          images: Array.isArray(doc.data().images) ? doc.data().images : ['📦'],
+          rating: doc.data().rating || 0,
+          reviews: doc.data().reviews || 0,
+          inStock: doc.data().inStock !== undefined ? doc.data().inStock : true,
+          vedette: doc.data().vedette || false,
+          featured: doc.data().featured || false,
+          description: doc.data().description || '',
+          seller: doc.data().seller || '',
+          brand: doc.data().brand || '',
+          shortDescription: doc.data().shortDescription || '',
+          discount: doc.data().discount || 0,
+        }));
 
-  // Nettoyage de l'abonnement lors du démontage du composant
-  return () => unsubscribe();
-}, []);
+        setProducts(productsData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erreur lors du traitement des données:", error);
+        setIsLoading(false);
+      }
+    });
+
+    // Nettoyage de l'abonnement lors du démontage du composant
+    return () => unsubscribe();
+  }, []);
 
 
   // Données du carousel
@@ -153,56 +185,56 @@ useEffect(() => {
   }, []);
 
   // Helper function to assign icons (vous pouvez personnaliser ce mapping)
-function getIconForCategory(category: string) {
-  switch(category) {
-    case 'Matériaux de structure': return Home;
-    case 'Matériaux de revêtement': return Wrench;
-    case 'Matériaux d\'isolation': return Wrench;
-    case 'Matériaux de couverture': return Home;
-    case 'Matériaux de plomberie': return Wrench;
-    case 'Matériaux électriques': return Monitor;
-    case 'Matériaux de finition': return Wrench;
-    case 'Matériaux de menuiserie': return Wrench;
-    case 'Matériaux de sécurité': return Wrench;
-    case 'Matériaux de décoration': return Tag;
-    case 'Équipements et outillage': return Wrench;
-    case 'BTIC Bio Nature': return Tag;
-    default: return Package;
+  function getIconForCategory(category: string) {
+    switch (category) {
+      case 'Matériaux de structure': return Home;
+      case 'Matériaux de revêtement': return Wrench;
+      case 'Matériaux d\'isolation': return Wrench;
+      case 'Matériaux de couverture': return Home;
+      case 'Matériaux de plomberie': return Wrench;
+      case 'Matériaux électriques': return Monitor;
+      case 'Matériaux de finition': return Wrench;
+      case 'Matériaux de menuiserie': return Wrench;
+      case 'Matériaux de sécurité': return Wrench;
+      case 'Matériaux de décoration': return Tag;
+      case 'Équipements et outillage': return Wrench;
+      case 'BTIC Bio Nature': return Tag;
+      default: return Package;
+    }
   }
-}
 
-// Fonction helper pour normaliser les IDs de catégorie
-const normalizeCategory = (category: string) => 
+  // Fonction helper pour normaliser les IDs de catégorie
+  const normalizeCategory = (category: string) =>
     category.toLowerCase().replace(/\s+/g, '-');
 
   const categories = [
-    { 
-        id: 'all', 
-        name: 'Tous les produits', 
-        icon: Package, 
-        count: products.length 
+    {
+      id: 'all',
+      name: 'Tous les produits',
+      icon: Package,
+      count: products.length
     },
     ...CATEGORIES_LIST.map(cat => ({
-        id: normalizeCategory(cat), // Utilisation de la fonction helper
-        name: cat,
-        icon: getIconForCategory(cat),
-        count: products.filter(p => normalizeCategory(p.category) === normalizeCategory(cat)).length
+      id: normalizeCategory(cat), // Utilisation de la fonction helper
+      name: cat,
+      icon: getIconForCategory(cat),
+      count: products.filter(p => normalizeCategory(p.category) === normalizeCategory(cat)).length
     }))
-];
+  ];
 
 
   // Filtrage et tri des produits
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.subcategory.toLowerCase().includes(searchTerm.toLowerCase());
-      
+        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.subcategory.toLowerCase().includes(searchTerm.toLowerCase());
+
       // Modification ici pour gérer les nouveaux IDs de catégorie
-const matchesCategory = selectedCategory === 'all' || 
-                      normalizeCategory(product.category) === normalizeCategory(selectedCategory);
+      const matchesCategory = selectedCategory === 'all' ||
+        normalizeCategory(product.category) === normalizeCategory(selectedCategory);
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-      
+
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
@@ -225,7 +257,7 @@ const matchesCategory = selectedCategory === 'all' ||
     }
 
     return filtered;
-}, [products, searchTerm, selectedCategory, priceRange, sortBy]);
+  }, [products, searchTerm, selectedCategory, priceRange, sortBy]);
 
   const toggleFavorite = (productId: unknown) => {
     setFavorites(prev => {
@@ -239,17 +271,37 @@ const matchesCategory = selectedCategory === 'all' ||
     });
   };
 
-  const toggleCart = (productId: unknown) => {
-    setCart(prev => {
-      const newCart = new Set(prev);
-      if (newCart.has(productId)) {
-        newCart.delete(productId);
-      } else {
-        newCart.add(productId);
+const toggleCart = (productId: string) => {
+  setCart(prev => {
+    const newCart = new Set(prev);
+    const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
+
+    if (newCart.has(productId)) {
+      newCart.delete(productId);
+      delete cartData[productId];
+    } else {
+      newCart.add(productId);
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        cartData[productId] = {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images[0],
+          description: product.shortDescription || '',
+          quantity: 1
+        };
       }
-      return newCart;
-    });
-  };
+    }
+
+    localStorage.setItem('marketplace-cart', JSON.stringify(Array.from(newCart)));
+    localStorage.setItem('marketplace-cart-data', JSON.stringify(cartData));
+
+    return newCart;
+  });
+};
+
+
 
   // Animation pour le panier quand un produit est ajouté/retiré
   useEffect(() => {
@@ -295,13 +347,13 @@ const matchesCategory = selectedCategory === 'all' ||
     description: string;
     seller: string;
     brand?: string;
-  shortDescription?: string;
+    shortDescription?: string;
     discount?: number;
-    vedette?:boolean;
+    vedette?: boolean;
 
   };
 
-   const ProductCard = ({ product }: { product: Product }) => (
+  const ProductCard = ({ product }: { product: Product }) => (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200">
       {/* Image Container */}
       <div className="relative overflow-hidden">
@@ -312,7 +364,7 @@ const matchesCategory = selectedCategory === 'all' ||
             className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
           />
         </Link>
-        
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {product.vedette && (
@@ -336,11 +388,10 @@ const matchesCategory = selectedCategory === 'all' ||
         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-8 group-hover:translate-x-0">
           <button
             onClick={() => toggleFavorite(product.id)}
-            className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 ${
-              favorites.has(product.id) 
-                ? 'bg-red-500 text-white' 
-                : 'bg-white/80 text-gray-600 hover:bg-red-50 hover:text-red-500'
-            }`}
+            className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110 ${favorites.has(product.id)
+              ? 'bg-red-500 text-white'
+              : 'bg-white/80 text-gray-600 hover:bg-red-50 hover:text-red-500'
+              }`}
           >
             <Heart className={`w-4 h-4 ${favorites.has(product.id) ? 'fill-current' : ''}`} />
           </button>
@@ -367,9 +418,9 @@ const matchesCategory = selectedCategory === 'all' ||
             {product.name}
           </h3>
         </Link>
-        
+
         <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.shortDescription}</p>
-        
+
         <div className="flex items-center justify-between mb-3">
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
@@ -378,10 +429,10 @@ const matchesCategory = selectedCategory === 'all' ||
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-blue-600">{formatPrice(product.price)}</span>
               {product.oldPrice !== null && product.oldPrice !== undefined && product.oldPrice > 0 ? (
-  <span className="text-sm text-gray-400 line-through">
-    {formatPrice(product.oldPrice)}
-  </span>
-) : null}
+                <span className="text-sm text-gray-400 line-through">
+                  {formatPrice(product.oldPrice)}
+                </span>
+              ) : null}
             </div>
           </div>
         </div>
@@ -391,13 +442,12 @@ const matchesCategory = selectedCategory === 'all' ||
           <button
             onClick={() => toggleCart(product.id)}
             disabled={!product.inStock}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 ${
-              cart.has(product.id)
-                ? 'bg-red-500 text-white'
-                : product.inStock
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:scale-105 ${cart.has(product.id)
+              ? 'bg-red-500 text-white'
+              : product.inStock
                 ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+              }`}
           >
             <ShoppingCart className="w-4 h-4" />
             {cart.has(product.id) ? 'Retirer' : product.inStock ? 'Ajouter' : 'Indisponible'}
@@ -410,26 +460,26 @@ const matchesCategory = selectedCategory === 'all' ||
 
   // Pagination logic
   const [currentPage, setCurrentPage] = useState(1);
-const productsPerPage = 9;
+  const productsPerPage = 9;
 
-const paginatedProducts = useMemo(() => {
-  const start = (currentPage - 1) * productsPerPage;
-  return filteredProducts.slice(start, start + productsPerPage);
-}, [filteredProducts, currentPage]);
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * productsPerPage;
+    return filteredProducts.slice(start, start + productsPerPage);
+  }, [filteredProducts, currentPage]);
 
-const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-const handleNextPage = () => {
-  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-};
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
 
-const handlePrevPage = () => {
-  setCurrentPage((prev) => Math.max(prev - 1, 1));
-};
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
 
-const handlePageClick = (page: number) => {
-  setCurrentPage(page);
-};
+  const handlePageClick = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
@@ -440,11 +490,10 @@ const handlePageClick = (page: number) => {
           {carouselSlides.map((slide, index) => (
             <div
               key={slide.id}
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-                index === currentSlide 
-                  ? 'opacity-100 scale-100' 
-                  : 'opacity-0 scale-105'
-              }`}
+              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${index === currentSlide
+                ? 'opacity-100 scale-100'
+                : 'opacity-0 scale-105'
+                }`}
             >
               {/* Background Image */}
               <div className="absolute inset-0">
@@ -498,18 +547,17 @@ const handlePageClick = (page: number) => {
         >
           <ChevronRight className="w-6 h-6" />
         </button>
-.
+        .
         {/* Dots Indicator */}
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
           {carouselSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'bg-white scale-125'
-                  : 'bg-white/50 hover:bg-white/75'
-              }`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
+                ? 'bg-white scale-125'
+                : 'bg-white/50 hover:bg-white/75'
+                }`}
             />
           ))}
         </div>
@@ -524,19 +572,17 @@ const handlePageClick = (page: number) => {
       </div>
 
       {/* Fixed Search Bar */}
-      <div className={`sticky top-0 z-50 transition-all duration-500 ${
-        isSearchFixed 
-          ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b' 
-          : 'bg-transparent'
-      }`}>
+      <div className={`sticky top-0 z-50 transition-all duration-500 ${isSearchFixed
+        ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b'
+        : 'bg-transparent'
+        }`}>
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className={`transition-all duration-500 ${
-              isSearchFixed ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}>
+            <div className={`transition-all duration-500 ${isSearchFixed ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}>
               <h2 className="text-xl font-bold text-gray-900">Marketplace</h2>
             </div>
-            
+
             <div className="flex items-center gap-3 flex-1 lg:flex-none">
               <div className="relative lg:w-96 flex-1 lg:flex-none">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -545,55 +591,50 @@ const handlePageClick = (page: number) => {
                   placeholder="Rechercher un produit..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${
-                    isSearchFixed 
-                      ? 'bg-white border-gray-200 shadow-sm' 
-                      : 'bg-white/90 backdrop-blur-sm border-white/50'
-                  }`}
+                  className={`w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${isSearchFixed
+                    ? 'bg-white border-gray-200 shadow-sm'
+                    : 'bg-white/90 backdrop-blur-sm border-white/50'
+                    }`}
                 />
               </div>
 
               {/* Cart Icon */}
               <div className="relative">
-                <button className={`relative p-3 rounded-xl transition-all duration-300 hover:scale-110 group cart-pulse ${
-                  isSearchFixed 
-                    ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700' 
-                    : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/50'
-                }`}>
+                <button className={`relative p-3 rounded-xl transition-all duration-300 hover:scale-110 group cart-pulse ${isSearchFixed
+                  ? 'bg-blue-600 text-white shadow-lg hover:bg-blue-700'
+                  : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white border border-white/50'
+                  }`} onClick={() => router.push('/cart')}>
                   <ShoppingCart className="w-6 h-6" />
-                  
+
                   {/* Cart Badge */}
-                  {cart.size > 0 && (
-                    <div className={`absolute -top-2 -right-2 min-w-[20px] h-5 rounded-full flex items-center justify-center text-xs font-bold animate-bounce ${
-                      isSearchFixed 
-                        ? 'bg-orange-500 text-white' 
-                        : 'bg-red-500 text-white'
-                    }`}>
-                      {cart.size}
+                  {cartCount > 0 && (
+                    <div className={`absolute -top-2 -right-2 min-w-[20px] h-5 rounded-full flex items-center justify-center text-xs font-bold animate-bounce ${isSearchFixed
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-red-500 text-white'
+                      }`}>
+                      {cartCount}
                     </div>
                   )}
-                  
+
                   {/* Pulse Animation when items added */}
-                  {cart.size > 0 && (
-                    <div className={`absolute inset-0 rounded-xl animate-ping ${
-                      isSearchFixed 
-                        ? 'bg-blue-600' 
-                        : 'bg-white'
-                    } opacity-20`} />
+                  {cartCount > 0 && (
+                    <div className={`absolute inset-0 rounded-xl animate-ping ${isSearchFixed
+                      ? 'bg-blue-600'
+                      : 'bg-white'
+                      } opacity-20`} />
                   )}
                 </button>
 
                 {/* Cart Tooltip */}
                 <div className="absolute top-full mt-2 right-0 bg-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-50">
-                  {cart.size === 0 ? 'Panier vide' : `${cart.size} article${cart.size > 1 ? 's' : ''} dans le panier`}
+                  {cartCount === 0 ? 'Panier vide' : `${cartCount} article${cartCount > 1 ? 's' : ''} dans le panier`}
                   <div className="absolute -top-1 right-4 w-2 h-2 bg-gray-900 rotate-45" />
                 </div>
               </div>
             </div>
 
-            <div className={`transition-all duration-500 ${
-              isSearchFixed ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}>
+            <div className={`transition-all duration-500 ${isSearchFixed ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">
                   {filteredProducts.length} produits
@@ -646,19 +687,17 @@ const handlePageClick = (page: number) => {
                         <button
                           key={category.id}
                           onClick={() => setSelectedCategory(category.id)}
-                          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300 hover:scale-105 ${
-                            selectedCategory === category.id
-                              ? 'bg-blue-600 text-white shadow-lg'
-                              : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600'
-                          }`}
+                          className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-300 hover:scale-105 ${selectedCategory === category.id
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <Icon className="w-5 h-5" />
                             <span className="font-medium">{category.name}</span>
                           </div>
-                          <span className={`text-sm px-2 py-1 rounded-full ${
-                            selectedCategory === category.id ? 'bg-white/20' : 'bg-gray-200'
-                          }`}>
+                          <span className={`text-sm px-2 py-1 rounded-full ${selectedCategory === category.id ? 'bg-white/20' : 'bg-gray-200'
+                            }`}>
                             {category.count}
                           </span>
                         </button>
@@ -722,17 +761,15 @@ const handlePageClick = (page: number) => {
                 <div className="flex items-center bg-gray-100 rounded-xl p-1">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                      }`}
                   >
                     <Grid className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      viewMode === 'list' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-                    }`}
+                    className={`p-2 rounded-lg transition-all duration-300 ${viewMode === 'list' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                      }`}
                   >
                     <List className="w-5 h-5" />
                   </button>
@@ -741,84 +778,82 @@ const handlePageClick = (page: number) => {
             </div>
 
             {/* Products Grid */}
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <span className="loading loading-spinner loading-lg text-primary"></span>
-              <span className="ml-2">Chargement des produits...</span>
-            </div>
-          ) : 
-            filteredProducts.length > 0 ? (
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
-                {paginatedProducts.map((product) => (
-  <ProductCard key={product.id} product={product} />
-))}
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <span className="loading loading-spinner loading-lg text-primary"></span>
+                <span className="ml-2">Chargement des produits...</span>
               </div>
-            ) : (
-              <div className="text-center py-16">
-                <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Package className="w-12 h-12 text-gray-400" />
+            ) :
+              filteredProducts.length > 0 ? (
+                <div className={`grid gap-6 ${viewMode === 'grid'
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                  : 'grid-cols-1'
+                  }`}>
+                  {paginatedProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucun produit trouvé</h3>
-                <p className="text-gray-600 mb-6">
-                  Essayez de modifier vos critères de recherche ou de filtrage
-                </p>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Package className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucun produit trouvé</h3>
+                  <p className="text-gray-600 mb-6">
+                    Essayez de modifier vos critères de recherche ou de filtrage
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setSelectedCategory('all');
+                      setPriceRange([0, 500000]);
+                    }}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300"
+                  >
+                    Réinitialiser les filtres
+                  </button>
+                </div>
+              )
+            }
+
+            {/* pagination suite */}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-10 gap-2">
                 <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedCategory('all');
-                    setPriceRange([0, 500000]);
-                  }}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300"
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
                 >
-                  Réinitialiser les filtres
+                  Précédent
+                </button>
+
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => handlePageClick(i + 1)}
+                    className={`px-4 py-2 rounded-lg ${currentPage === i + 1
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 hover:bg-gray-200'
+                      }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                >
+                  Suivant
                 </button>
               </div>
-            )
-          }
+            )}
 
-{/* pagination suite */}
-          {totalPages > 1 && (
-  <div className="flex justify-center mt-10 gap-2">
-    <button
-      onClick={handlePrevPage}
-      disabled={currentPage === 1}
-      className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-    >
-      Précédent
-    </button>
 
-    {[...Array(totalPages)].map((_, i) => (
-      <button
-        key={i + 1}
-        onClick={() => handlePageClick(i + 1)}
-        className={`px-4 py-2 rounded-lg ${
-          currentPage === i + 1
-            ? 'bg-blue-600 text-white' 
-            : 'bg-gray-100 hover:bg-gray-200'
-        }`}
-      >
-        {i + 1}
-      </button>
-    ))}
-
-    <button
-      onClick={handleNextPage}
-      disabled={currentPage === totalPages}
-      className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-    >
-      Suivant
-    </button>
-  </div>
-)}
-
-                      
-                    </div>
-                  </div>
-                </div>
+          </div>
+        </div>
+      </div>
 
       <style jsx>{`
         .line-clamp-2 {

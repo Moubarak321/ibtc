@@ -6,6 +6,36 @@ import Link from 'next/link';
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+ useEffect(() => {
+  const updateCartCount = () => {
+    const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
+    const total = Object.values(cartData).reduce((sum: number, item: any) => {
+      return sum + (item.quantity || 1);
+    }, 0);
+    setCartCount(total);
+  };
+
+  updateCartCount(); // Initial load
+
+  const interval = setInterval(updateCartCount, 1000); // check every second
+  return () => clearInterval(interval);
+}, []);
+
+
+
+
+//   useEffect(() => {
+//   const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
+//   const total = Object.values(cartData).reduce((sum: number, item: any) => {
+//     return sum + (item.quantity || 1);
+//   }, 0);
+//   setCartCount(total);
+// }, []);
+
+
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -109,10 +139,18 @@ const Header = () => {
 
             <Link href="/cart">
               <button className="flex items-center gap-2  border border-color:bg-gradient-to-r from-blue-600 text-black px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm bg-white">
-               
-               
-                <ShoppingCart className="w-6 h-6 " />
-                Panier
+
+
+                <div className="relative">
+                  <ShoppingCart className="w-6 h-6" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </div>
+                <span>Panier</span>
+
               </button>
             </Link>
 
@@ -164,7 +202,7 @@ const Header = () => {
                   Boutique
                 </button>
               </Link>
-                <Link href="/cart">
+              <Link href="/cart">
                 <button className="flex items-center gap-2  border border-color:bg-gradient-to-r from-blue-600 text-black px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105 text-sm bg-white">
                   <ShoppingCart className="w-6 h-6 " />
                   Panier
