@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus, Trash2, ShoppingCart, FileText, User, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 
 interface ProductCartItem {
@@ -112,6 +113,30 @@ const ModernCartQuote = () => {
       return updated;
     });
   };
+
+const generateWhatsAppMessage = () => {
+  if (cartItems.length === 0) return '';
+
+  let message = 'Bonjour, je souhaite commander les articles suivants :\n\n';
+
+  cartItems.forEach(item => {
+    message += `- ${item.name} x${item.quantity} → ${(item.price * item.quantity).toFixed(2)} FCFA\n`;
+  });
+
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  message += `\nTotal : ${total.toFixed(2)} FCFA`;
+
+  return message;
+};
+
+
+const sendToWhatsApp = () => {
+  const message = generateWhatsAppMessage();
+  const phone = '+22990838919'; // Remplace par ton numéro WhatsApp
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+};
+
 
 
   const getTotalPrice = () => {
@@ -294,7 +319,13 @@ const ModernCartQuote = () => {
                   </div>
                 </div>
               </div>
-
+                <button
+                  onClick={sendToWhatsApp}
+                  className="w-full bg-gradient-to-r mb-4 from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center gap-2"
+                >
+                  <FaWhatsapp className="w-5 h-5" />
+                  Commander via WhatsApp
+                </button>
               {!showQuoteForm ? (
                 <button
                   onClick={() => setShowQuoteForm(true)}
