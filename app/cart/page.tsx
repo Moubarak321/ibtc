@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Minus, Trash2, ShoppingCart, FileText, User, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
-
+import { getFirestore, collection, addDoc, Timestamp } from 'firebase/firestore';
+import { app } from '@/lib/firebase/client-config';
 
 interface ProductCartItem {
   id: string;
@@ -114,28 +115,52 @@ const ModernCartQuote = () => {
     });
   };
 
-const generateWhatsAppMessage = () => {
-  if (cartItems.length === 0) return '';
+  const generateWhatsAppMessage = () => {
+    if (cartItems.length === 0) return '';
 
-  let message = 'Bonjour, je souhaite commander les articles suivants :\n\n';
+    let message = 'Bonjour, je souhaite commander les articles suivants :\n\n';
 
-  cartItems.forEach(item => {
-    message += `- ${item.name} x${item.quantity} → ${(item.price * item.quantity).toFixed(2)} FCFA\n`;
-  });
+    cartItems.forEach(item => {
+      message += `- ${item.name} x${item.quantity} → ${(item.price * item.quantity).toFixed(2)} FCFA\n`;
+    });
 
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  message += `\nTotal : ${total.toFixed(2)} FCFA`;
+    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    message += `\nTotal : ${total.toFixed(2)} FCFA`;
 
-  return message;
-};
+    return message;
+  };
 
+  const submitOrderToFirestore = async () => {
+    const db = getFirestore(app);
 
-const sendToWhatsApp = () => {
-  const message = generateWhatsAppMessage();
-  const phone = '+22990838919'; // Remplace par ton numéro WhatsApp
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
-};
+    const order = {
+      customer: formData,
+      items: cartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      total: getTotalPrice(),
+      status: 'en_attente',
+      createdAt: Timestamp.now()
+    };
+    console.log('Envoi de la commande à Firestore:', order);
+    try {
+      const docRef = await addDoc(collection(db, 'cart'), order);
+      console.log('Commande enregistrée avec l\'ID :', docRef.id);
+    } catch (error) {
+      console.error('Erreur lors de l\'enregistrement de la commande :', error);
+      throw error;
+    }
+  };
+
+  const sendToWhatsApp = () => {
+    const message = generateWhatsAppMessage();
+    const phone = '+22990838919'; // Remplace par ton numéro WhatsApp
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
 
 
 
@@ -166,7 +191,6 @@ const sendToWhatsApp = () => {
   };
 
   const handleSubmitQuote = async () => {
-    // Validation basique
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
       alert('Veuillez remplir tous les champs obligatoires');
       return;
@@ -175,17 +199,22 @@ const sendToWhatsApp = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulation d'envoi
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // simulation
 
-      const pdfData = await generatePDF();
+      await submitOrderToFirestore(); // 👈 ici on envoie dans Firestore
+      await sendToWhatsApp()
+      const pdfData = await generatePDF(); // si tu veux garder l’ancienne logique PDF
 
-      // Ici vous intégreriez votre API pour envoyer les données
       console.log('Envoi des données au serveur:', pdfData);
 
       setIsSuccess(true);
 
-      // Reset après 3 secondes
+      // vider le panier
+      setCartItems([]);
+      localStorage.removeItem('marketplace-cart');
+      localStorage.removeItem('marketplace-cart-data');
+
+      // reset formulaire
       setTimeout(() => {
         setIsSuccess(false);
         setShowQuoteForm(false);
@@ -202,11 +231,13 @@ const sendToWhatsApp = () => {
       }, 3000);
 
     } catch (error) {
-      console.error('Erreur lors de l\'envoi:', error);
+      console.error("Erreur lors de l'envoi du devis :", error);
+      alert("Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   if (cartItems.length === 0) {
     return (
@@ -319,13 +350,13 @@ const sendToWhatsApp = () => {
                   </div>
                 </div>
               </div>
-                <button
-                  onClick={sendToWhatsApp}
-                  className="w-full bg-gradient-to-r mb-4 from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center gap-2"
-                >
-                  <FaWhatsapp className="w-5 h-5" />
-                  Commander via WhatsApp
-                </button>
+              <button
+                onClick={sendToWhatsApp}
+                className="w-full bg-gradient-to-r mb-4 from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center gap-2"
+              >
+                <FaWhatsapp className="w-5 h-5" />
+                Commander via WhatsApp
+              </button>
               {!showQuoteForm ? (
                 <button
                   onClick={() => setShowQuoteForm(true)}
