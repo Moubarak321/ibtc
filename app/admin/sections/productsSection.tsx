@@ -4,6 +4,7 @@ import { Plus, Search, Edit, Trash2, Eye, Filter } from 'lucide-react';
 import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { app } from '@/lib/firebase/client-config';
 import ProductModal from '../components/productModal';
+import Link from 'next/link';
 
 interface Product {
     id: string;
@@ -46,51 +47,51 @@ const ProductsSection = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-  const db = getFirestore(app);
-  const productsCollection = collection(db, 'products');
-  
-  // Abonnement aux mises à jour en temps réel
-  const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
-    try {
-      const productList = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          name: data.name || '',
-          price: data.price || 0,
-          stock: data.stock || 0,
-          category: data.category || '',
-          status: data.status || 'Actif',
-          images: Array.isArray(data.images) ? data.images : ['📦'],
-          oldPrice: data.oldPrice || '',
-          discount: data.discount || 0,
-          brand: data.brand || '',
-          shortDescription: data.shortDescription || '',
-          longDescription: data.longDescription || '',
-          specifications: data.specifications || {},
-          features: data.features || [],
-          inStock: data.inStock ?? true,
-          vedette: data.vedette ?? false,
-          fastDelivery: data.fastDelivery ?? false,
-          services: data.services || {
-            delivery: { title: '', description: '' },
-            warranty: { title: '', description: '' }
-          },
-          createdAt: data.createdAt?.toDate() || new Date(),
-          updatedAt: data.updatedAt?.toDate() || new Date()
-        };
-      });
-      setProducts(productList);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erreur lors du chargement des produits:", error);
-      setIsLoading(false);
-    }
-  });
+        const db = getFirestore(app);
+        const productsCollection = collection(db, 'products');
 
-  // Nettoyage de l'abonnement
-  return () => unsubscribe();
-}, []);
+        // Abonnement aux mises à jour en temps réel
+        const unsubscribe = onSnapshot(productsCollection, (snapshot) => {
+            try {
+                const productList = snapshot.docs.map((doc) => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        name: data.name || '',
+                        price: data.price || 0,
+                        stock: data.stock || 0,
+                        category: data.category || '',
+                        status: data.status || 'Actif',
+                        images: Array.isArray(data.images) ? data.images : ['📦'],
+                        oldPrice: data.oldPrice || '',
+                        discount: data.discount || 0,
+                        brand: data.brand || '',
+                        shortDescription: data.shortDescription || '',
+                        longDescription: data.longDescription || '',
+                        specifications: data.specifications || {},
+                        features: data.features || [],
+                        inStock: data.inStock ?? true,
+                        vedette: data.vedette ?? false,
+                        fastDelivery: data.fastDelivery ?? false,
+                        services: data.services || {
+                            delivery: { title: '', description: '' },
+                            warranty: { title: '', description: '' }
+                        },
+                        createdAt: data.createdAt?.toDate() || new Date(),
+                        updatedAt: data.updatedAt?.toDate() || new Date()
+                    };
+                });
+                setProducts(productList);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Erreur lors du chargement des produits:", error);
+                setIsLoading(false);
+            }
+        });
+
+        // Nettoyage de l'abonnement
+        return () => unsubscribe();
+    }, []);
 
     const handleSaveProduct = async (productData: {
         name: string;
@@ -312,7 +313,7 @@ const ProductsSection = () => {
                                                 {product.vedette ? 'Oui' : 'Non'}
                                             </span>
                                         </td>
-                                        
+
                                         <td className="py-4 px-6">{product.category || '—'}</td>
                                         <td className="py-4 px-6">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(product.status)}`}>
@@ -321,13 +322,14 @@ const ProductsSection = () => {
                                         </td>
                                         <td className="py-4 px-6">
                                             <div className="flex gap-2">
-                                                <button
-                                                    className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200"
-                                                    onClick={() => setPreviewImage(product.images?.[0] || '')}
-                                                    disabled={isLoading}
-                                                >
-                                                    <Eye className="w-4 h-4" />
-                                                </button>
+                                                <Link href={`/marketplace/details/${product.id}`}>
+                                                    <button
+                                                        className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200"
+                                                        disabled={isLoading}
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </button>
+                                                </Link>
                                                 <button
                                                     onClick={() => {
                                                         setSelectedProduct(product);
