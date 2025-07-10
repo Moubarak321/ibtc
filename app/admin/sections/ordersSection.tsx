@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Package, TrendingUp, Star, Filter, Calendar, Download, Eye, Edit, Search, X, User, MapPin, Phone, Mail, MessageCircle, Loader2, CheckCircle, Clock, Truck, AlertCircle } from 'lucide-react';
+import { ShoppingCart, Package, TrendingUp, Star, Filter, Calendar, Download, Eye, Edit, Search, X, User, MapPin, Phone, Mail, MessageCircle, Loader2, CheckCircle, Clock, Truck, AlertCircle, ChevronRight, ChevronsRight, ChevronLeft, ChevronsLeft } from 'lucide-react';
 import { collection, getDocs, doc, updateDoc, query, orderBy, where, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client-config'; // Ajustez le chemin selon votre configuration
 
@@ -42,6 +42,9 @@ const OrdersSection = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [dateFilter, setDateFilter] = useState('all');
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [ordersPerPage] = useState(10); // Nombre d'éléments par page
 
     const statusOptions = [
         { value: 'en_attente', label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },
@@ -219,6 +222,20 @@ const OrdersSection = () => {
         );
     }
 
+
+    // Pagination logic
+    const indexOfLastOrder = currentPage * ordersPerPage;
+    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+    const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+    const firstPage = () => setCurrentPage(1);
+    const lastPage = () => setCurrentPage(totalPages);
+
+
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -331,7 +348,7 @@ const OrdersSection = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredOrders.map((order) => (
+                            {currentOrders.map((order) => (
                                 <tr key={order.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200">
                                     <td className="py-4 px-6 font-medium">#{order.id.substring(0, 8)}</td>
                                     <td className="py-4 px-6">
@@ -384,6 +401,54 @@ const OrdersSection = () => {
                         </tbody>
                     </table>
                 </div>
+                {filteredOrders.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-4 py-3 bg-gray-50 rounded-lg">
+            <div className="text-sm text-gray-600">
+                Affichage de {indexOfFirstOrder + 1} à {Math.min(indexOfLastOrder, filteredOrders.length)} sur {filteredOrders.length} commandes
+            </div>
+            <div className="flex items-center gap-1">
+                <button
+                    onClick={firstPage}
+                    disabled={currentPage === 1}
+                    className="p-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200"
+                >
+                    <ChevronsLeft className="w-5 h-5" />
+                </button>
+                <button
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                    className="p-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200"
+                >
+                    <ChevronLeft className="w-5 h-5" />
+                </button>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                    <button
+                        key={number}
+                        onClick={() => paginate(number)}
+                        className={`w-8 h-8 rounded-md text-sm ${currentPage === number ? 'bg-blue-600 text-white' : 'hover:bg-gray-200'}`}
+                    >
+                        {number}
+                    </button>
+                ))}
+                
+                <button
+                    onClick={nextPage}
+                    disabled={currentPage === totalPages}
+                    className="p-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200"
+                >
+                    <ChevronRight className="w-5 h-5" />
+                </button>
+                <button
+                    onClick={lastPage}
+                    disabled={currentPage === totalPages}
+                    className="p-1 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200"
+                >
+                    <ChevronsRight className="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+    )}
             </div>
 
             {/* Modal de détails de commande */}
