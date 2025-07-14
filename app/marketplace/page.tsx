@@ -60,12 +60,12 @@ const MarketplacePage = () => {
 
 
   useEffect(() => {
-  const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
-  const totalQuantity = Object.values(cartData).reduce((sum, item: any) => {
-    return sum + (item.quantity || 1);
-  }, 0);
-  setCartCount(Number(totalQuantity));
-}, [cart]);
+    const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
+    const totalQuantity = Object.values(cartData).reduce((sum, item: any) => {
+      return sum + (item.quantity || 1);
+    }, 0);
+    setCartCount(Number(totalQuantity));
+  }, [cart]);
 
 
 
@@ -249,8 +249,8 @@ const MarketplacePage = () => {
       case 'rating':
         filtered.sort((a, b) => b.rating - a.rating);
         break;
-      case 'featured':
-        filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+      case 'vedette':
+        filtered.sort((a, b) => (b.vedette ? 1 : 0) - (a.vedette ? 1 : 0));
         break;
       default:
         break;
@@ -271,35 +271,35 @@ const MarketplacePage = () => {
     });
   };
 
-const toggleCart = (productId: string) => {
-  setCart(prev => {
-    const newCart = new Set(prev);
-    const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
+  const toggleCart = (productId: string) => {
+    setCart(prev => {
+      const newCart = new Set(prev);
+      const cartData = JSON.parse(localStorage.getItem('marketplace-cart-data') || '{}');
 
-    if (newCart.has(productId)) {
-      newCart.delete(productId);
-      delete cartData[productId];
-    } else {
-      newCart.add(productId);
-      const product = products.find(p => p.id === productId);
-      if (product) {
-        cartData[productId] = {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.images[0],
-          description: product.shortDescription || '',
-          quantity: 1
-        };
+      if (newCart.has(productId)) {
+        newCart.delete(productId);
+        delete cartData[productId];
+      } else {
+        newCart.add(productId);
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          cartData[productId] = {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            description: product.shortDescription || '',
+            quantity: 1
+          };
+        }
       }
-    }
 
-    localStorage.setItem('marketplace-cart', JSON.stringify(Array.from(newCart)));
-    localStorage.setItem('marketplace-cart-data', JSON.stringify(cartData));
+      localStorage.setItem('marketplace-cart', JSON.stringify(Array.from(newCart)));
+      localStorage.setItem('marketplace-cart-data', JSON.stringify(cartData));
 
-    return newCart;
-  });
-};
+      return newCart;
+    });
+  };
 
 
 
@@ -751,7 +751,7 @@ const toggleCart = (productId: string) => {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                 >
-                  <option value="featured">Produits vedettes</option>
+                  <option value="vedette">Produits vedettes</option>
                   <option value="price-low">Prix croissant</option>
                   <option value="price-high">Prix décroissant</option>
                   <option value="rating">Mieux notés</option>
