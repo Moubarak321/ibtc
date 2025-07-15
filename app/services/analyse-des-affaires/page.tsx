@@ -12,7 +12,8 @@ import {
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import emailjs from 'emailjs-com';
 
 type Features = {
   icon: React.ElementType;
@@ -64,6 +65,7 @@ const features: Features[] = [
 ];
 
 export default function AnalyseDesAffairesPage() {
+  const form = useRef<HTMLFormElement>(null);
   const [selectedFeature, setSelectedFeature] = useState<Features | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -74,6 +76,27 @@ export default function AnalyseDesAffairesPage() {
     "Optimisation des processus métier",
     "Accompagnement personnalisé sur 6 mois",
   ];
+
+  const sendEmail = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!form.current) return;
+
+    emailjs.sendForm(
+      'service_1ib6o0n',
+      'template_q05rlxf',
+      form.current,
+      'OlS5NP3Ux2CJSxCJu'
+    ).then(
+      () => {
+        alert('Message envoyé !');
+        form.current?.reset();
+      },
+      (error) => {
+        alert('Erreur : ' + error.text);
+      }
+    );
+  };
 
   return (
     <main className="min-h-screen">
@@ -231,21 +254,22 @@ export default function AnalyseDesAffairesPage() {
                 <p style={{ marginBottom: 15 }}>{selectedFeature.details}</p>
 
                 {showForm ? (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      alert("Demande envoyée !");
-                      setSelectedFeature(null);
-                      setShowForm(false);
-                    }}
-                  >
-                    <input type="text" placeholder="Votre nom" required style={inputStyle} />
-                    <input type="email" placeholder="Votre email" required style={inputStyle} />
-                    <input type="tel" placeholder="Votre téléphone" required style={inputStyle} />
-                    <input type="date" required style={inputStyle} />
+                  <form ref={form} onSubmit={(e) => {
+                    e.preventDefault();
+                    sendEmail(e);
+                    setSelectedFeature(null);
+                    setShowForm(false);
+                  }}>
+                    <input type="text" name="name" id="name" placeholder="Votre nom" required style={inputStyle} />
+                    <input type="text" name="title" id="title" placeholder="Objet" required style={inputStyle} />
+                    {/* <input type="text"  name="company" id="company" placeholder="Votre entreprise" required style={inputStyle} /> */}
+                    <input type="email" name="email" id="email" placeholder="Votre email" required style={inputStyle} />
+                    <input type="tel" name="phone" id="phone" placeholder="Votre téléphone" required style={inputStyle} />
+                    {/* <input type="date" name="date" id="date" required style={inputStyle} /> */}
                     <textarea
                       placeholder="Message..."
                       required
+                      name="message" id="message"
                       style={{
                         width: "100%",
                         padding: 10,
