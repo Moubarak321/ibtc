@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+
 const ModernCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const router = useRouter();
+
   // Données du carrousel avec images et textes
   const slides = [
     {
@@ -69,12 +69,18 @@ const ModernCarousel = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const goToSlide = (index: React.SetStateAction<number>) => {
+  const goToSlide = (index: number) => {
     setCurrentSlide(index);
   };
 
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
+  };
+
+  // Fonction pour gérer le clic sur le CTA
+  const handleCtaClick = (slug: string) => {
+    // Vous pouvez utiliser router.push(slug) si vous préférez la navigation par programmation
+    window.location.href = slug; // Solution simple pour la redirection
   };
 
   return (
@@ -84,10 +90,11 @@ const ModernCarousel = () => {
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${index === currentSlide
-              ? 'opacity-100 scale-100'
-              : 'opacity-0 scale-105'
-              }`}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
+              index === currentSlide
+                ? 'opacity-100 scale-100 z-10'
+                : 'opacity-0 scale-105 z-0'
+            }`}
           >
             {/* Image de fond */}
             <div
@@ -101,10 +108,11 @@ const ModernCarousel = () => {
             {/* Contenu texte */}
             <div className="relative h-full flex items-center justify-center p-8">
               <div className="text-center text-white max-w-4xl mx-auto">
-                <div className={`transform transition-all duration-1000 delay-300 ${index === currentSlide
-                  ? 'translate-y-0 opacity-100'
-                  : 'translate-y-8 opacity-0'
-                  }`}>
+                <div className={`transform transition-all duration-1000 delay-300 ${
+                  index === currentSlide
+                    ? 'translate-y-0 opacity-100'
+                    : 'translate-y-8 opacity-0'
+                }`}>
                   <p className="text-lg md:text-xl font-medium mb-2 text-blue-200">
                     {slide.subtitle}
                   </p>
@@ -114,9 +122,12 @@ const ModernCarousel = () => {
                   <p className="text-lg md:text-xl text-gray-100 mb-8 max-w-2xl mx-auto leading-relaxed">
                     {slide.description}
                   </p>
-                  <a href={slide.slug} className="inline-block bg-white/20 backdrop-blur-md text-white px-8 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30 hover:scale-105 hover:shadow-xl">
+                  <button
+                    onClick={() => handleCtaClick(slide.slug)}
+                    className="inline-block bg-white/20 backdrop-blur-md text-white px-8 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30 hover:scale-105 hover:shadow-xl"
+                  >
                     {slide.cta}
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -125,7 +136,7 @@ const ModernCarousel = () => {
       </div>
 
       {/* Contrôles de navigation */}
-      <div className="absolute inset-y-0 left-4 flex items-center">
+      <div className="absolute inset-y-0 left-4 flex items-center z-20">
         <button
           onClick={prevSlide}
           className="bg-white/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 hover:scale-110 shadow-lg"
@@ -134,7 +145,7 @@ const ModernCarousel = () => {
         </button>
       </div>
 
-      <div className="absolute inset-y-0 right-4 flex items-center">
+      <div className="absolute inset-y-0 right-4 flex items-center z-20">
         <button
           onClick={nextSlide}
           className="bg-white/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300 hover:scale-110 shadow-lg"
@@ -144,21 +155,22 @@ const ModernCarousel = () => {
       </div>
 
       {/* Indicateurs de progression */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`relative overflow-hidden rounded-full transition-all duration-300 ${index === currentSlide
-              ? 'w-12 h-3 bg-white'
-              : 'w-3 h-3 bg-white/50 hover:bg-white/70'
-              }`}
+            className={`relative overflow-hidden rounded-full transition-all duration-300 ${
+              index === currentSlide
+                ? 'w-12 h-3 bg-white'
+                : 'w-3 h-3 bg-white/50 hover:bg-white/70'
+            }`}
           >
             {index === currentSlide && isPlaying && (
               <div
                 className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
                 style={{
-                  animation: 'progress 5s linear infinite'
+                  animation: 'progress 5s linear forwards'
                 }}
               />
             )}
@@ -167,7 +179,7 @@ const ModernCarousel = () => {
       </div>
 
       {/* Contrôle Play/Pause */}
-      <div className="absolute top-6 right-6">
+      <div className="absolute top-6 right-6 z-20">
         <button
           onClick={togglePlayPause}
           className="bg-white/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-white/30 transition-all duration-300 hover:scale-110 shadow-lg"
@@ -177,7 +189,7 @@ const ModernCarousel = () => {
       </div>
 
       {/* Informations sur le slide actuel */}
-      <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium">
+      <div className="absolute top-6 left-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium z-20">
         {currentSlide + 1} / {slides.length}
       </div>
 
