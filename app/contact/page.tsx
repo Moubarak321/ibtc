@@ -27,6 +27,7 @@ export default function ContactPage() {
       title: "Appelez-nous",
       subtitle: "Disponible 24h/7j",
       info: "+229 01 62 41 21 43",
+      link: "tel:+2290162412143",
       color: "from-blue-500 to-cyan-500",
       action: "Appeler maintenant"
     },
@@ -35,11 +36,12 @@ export default function ContactPage() {
       title: "Écrivez-nous",
       subtitle: "Réponse sous 2h",
       info: "businesscompanyha@gmail.com",
+      link: "#tagform",
       color: "from-purple-500 to-pink-500",
       action: "Envoyer un email"
     },
     // {
-    //   icon: MessageSquare,
+    //   icon: MessageSquare, 
     //   title: "Chat en direct",
     //   subtitle: "Support instantané",
     //   info: "Disponible maintenant",
@@ -170,10 +172,10 @@ export default function ContactPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+            <a href='tel:+2290162412143' className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
               <Phone className="w-5 h-5 mr-2" />
               Appeler maintenant
-            </button>
+            </a>
             {/* <button className="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300 flex items-center justify-center">
               <Calendar className="w-5 h-5 mr-2" />
               Planifier un rendez-vous
@@ -214,17 +216,17 @@ export default function ContactPage() {
               >
                 <div className="p-8 text-center">
                   <div className={`w-16 h-16 bg-gradient-to-r ${method.color} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-                    <method.icon className="w-8 h-8 text-white" />
+                    <method.icon className="w-8 h-8 text-white"/>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{method.title}</h3>
                   <p className="text-gray-600 mb-3">{method.subtitle}</p>
                   <p className={`font-semibold bg-gradient-to-r ${method.color} bg-clip-text text-transparent mb-4`}>
                     {method.info}
                   </p>
-                  <button className="text-blue-600 hover:text-purple-600 transition-colors font-medium flex items-center justify-center mx-auto">
+                  <a href={method.link} className="text-blue-600 hover:text-purple-600 transition-colors font-medium flex items-center justify-center mx-auto">
                     {method.action}
                     <ArrowRight className="w-4 h-4 ml-1" />
-                  </button>
+                  </a>
                 </div>
               </div>
             ))}
@@ -321,7 +323,7 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="lg:sticky lg:top-8">
               <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                <div className="text-center mb-8">
+                <div className="text-center mb-8" id='tagform'>
                   <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Send className="w-8 h-8 text-white" />
                   </div>
@@ -398,7 +400,7 @@ export default function ContactPage() {
           <div className="rounded-2xl overflow-hidden shadow-xl h-[500px] relative">
             <Map />
             <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-xl p-4 max-w-sm">
-              <h4 className="font-bold text-gray-900 mb-2">MultiServices Pro</h4>
+              <h4 className="font-bold text-gray-900 mb-2">International Business and Tourism Company</h4>
               <p className="text-gray-600 text-sm mb-2">Zogbohoue, Cotonou</p>
               <div className="flex items-center text-sm text-gray-600">
                 <Phone className="w-4 h-4 mr-1" />
@@ -419,14 +421,14 @@ export default function ContactPage() {
             Ne laissez pas vos idées en attente. Contactez-nous dès aujourd'hui pour une consultation gratuite.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
+            <a href='tel:+2290162412143' className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center">
               <Phone className="w-5 h-5 mr-2" />
               Appeler maintenant
-            </button>
-            <button className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center justify-center">
+            </a>
+            {/* <button className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center justify-center">
               <MessageSquare className="w-5 h-5 mr-2" />
               Démarrer le chat
-            </button>
+            </button> */}
           </div>
         </div>
       </section>

@@ -195,7 +195,7 @@ export default function TourismePage() {
                 <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
                 <p className="text-gray-600">{service.description}</p>
 
-                <button
+                {/* <button
                   style={{
                     marginTop: 12,
                     color: "blue",
@@ -210,7 +210,7 @@ export default function TourismePage() {
                   }}
                 >
                   En savoir plus
-                </button>
+                </button> */}
               </motion.div>
             ))}
           </div>

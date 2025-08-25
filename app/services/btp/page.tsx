@@ -116,13 +116,13 @@ export default function BTPPage() {
               Construisons ensemble l'avenir avec des projets durables et innovants
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button href="#contact" variant="white" className="text-lg px-8 py-4">
+              <Button href="/marketplace" variant="white" className="text-lg px-8 py-4">
                 Voir notre boutique
                 <FaArrowRight className="ml-2" />
               </Button>
-              <Button href="#services" className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30">
+              {/* <Button href="#services" className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30">
                 Nos Réalisations
-              </Button>
+              </Button> */}
             </div>
           </motion.div>
         </div>
@@ -154,7 +154,7 @@ export default function BTPPage() {
                 <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
                 <p className="text-gray-600">{service.description}</p>
 
-                <button
+                {/* <button
                   style={{
                     marginTop: 12,
                     color: "blue",
@@ -169,7 +169,7 @@ export default function BTPPage() {
                   }}
                 >
                   En savoir plus
-                </button>
+                </button> */}
               </motion.div>
             ))}
           </div>
@@ -415,7 +415,7 @@ export default function BTPPage() {
                   <FaArrowRight className="ml-2" />
                 </Link>
                 <a
-                  href="tel:+33123456789"
+                  href="tel:+2290162412143"
                   className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 text-lg border border-white/30"
                 >
                   <FaPhone className="mr-2" />

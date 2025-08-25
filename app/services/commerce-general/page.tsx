@@ -55,7 +55,7 @@ export default function CommerceGeneralPage() {
           <div className="absolute top-20 left-10 w-72 h-72 bg-green-400/20 rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl" />
         </div>
-        
+
         <div className="container relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -74,11 +74,11 @@ export default function CommerceGeneralPage() {
               Votre passerelle vers les marchés mondiaux avec des solutions commerciales innovantes
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button href="#contact" variant="white" className="text-lg px-8 py-4">
+              <Button href="/marketplace" variant="white" className="text-lg px-8 py-4">
                 Boutique
                 <FaArrowRight className="ml-2" />
               </Button>
-              <Button href="#services" className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30">
+              <Button href="/contact" className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30">
                 Contactez-nous
               </Button>
             </div>
@@ -115,7 +115,7 @@ export default function CommerceGeneralPage() {
               Des services intégrés pour optimiser votre chaîne de valeur commerciale
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map((service, index) => (
               <motion.div
@@ -146,10 +146,10 @@ export default function CommerceGeneralPage() {
                 Secteurs d'<span className="text-green-600">Excellence</span>
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                Nous couvrons une large gamme de secteurs avec une expertise approfondie 
+                Nous couvrons une large gamme de secteurs avec une expertise approfondie
                 et des partenariats stratégiques établis.
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sectors.map((sector, index) => (
                   <motion.div
@@ -173,7 +173,7 @@ export default function CommerceGeneralPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -187,7 +187,7 @@ export default function CommerceGeneralPage() {
                   className="rounded-2xl shadow-2xl"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-green-600/20 to-transparent rounded-2xl" />
-                
+
                 {/* Floating Elements */}
                 <motion.div
                   initial={{ opacity: 0, rotate: -10 }}
@@ -197,7 +197,7 @@ export default function CommerceGeneralPage() {
                 >
                   <FaGlobe className="text-2xl text-green-600" />
                 </motion.div>
-                
+
                 <motion.div
                   initial={{ opacity: 0, rotate: 10 }}
                   whileInView={{ opacity: 1, rotate: 0 }}
@@ -219,7 +219,7 @@ export default function CommerceGeneralPage() {
             <h2 className="text-4xl font-bold mb-4">Notre Processus</h2>
             <p className="text-xl text-gray-600">De l'idée à la réalisation</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
               { step: "01", title: "Analyse", desc: "Étude de marché approfondie" },
@@ -258,26 +258,28 @@ export default function CommerceGeneralPage() {
                 Développons Votre Business Ensemble
               </h2>
               <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-                Rejoignez notre réseau de partenaires et accédez à de nouveaux marchés 
+                Rejoignez notre réseau de partenaires et accédez à de nouveaux marchés
                 avec nos solutions commerciales sur mesure.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
-                  href="/contact"
+                  href="/marketplace"
                   className="inline-flex items-center bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-all duration-200 text-lg"
                 >
-                 Boutique
+                  Boutique
                   <FaArrowRight className="ml-2" />
                 </Link>
-                <a
-                  href="mailto:commerce@entreprise.com"
+
+                <Link
+                  href="/contact"
                   className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 text-lg border border-white/30"
                 >
                   Contactez-nous
-                </a>
+                </Link>
+
               </div>
-              
+
               <div className="mt-8 text-sm text-green-200">
                 ✓ Catalogue de 1M+ produits • ✓ Livraison mondiale • ✓ Support 24/7
               </div>

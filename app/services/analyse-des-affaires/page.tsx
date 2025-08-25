@@ -121,16 +121,16 @@ export default function AnalyseDesAffairesPage() {
               expertise en analyse business
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button href="#contact" variant="white" className="text-lg px-8 py-4">
+              <Button href="/contact" variant="white" className="text-lg px-8 py-4">
                 Demander un Devis
                 <FaArrowRight className="ml-2" />
               </Button>
-              <Button
+              {/* <Button
                 href="#features"
                 className="text-lg px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/30"
               >
                 Découvrir nos Services
-              </Button>
+              </Button> */}
             </div>
           </motion.div>
         </div>
@@ -164,7 +164,7 @@ export default function AnalyseDesAffairesPage() {
                 </h3>
                 <p className="text-gray-600">{feature.description}</p>
 
-                <button
+                {/* <button
                   style={{
                     marginTop: 12,
                     color: "blue",
@@ -179,7 +179,7 @@ export default function AnalyseDesAffairesPage() {
                   }}
                 >
                   En savoir plus
-                </button>
+                </button> */}
               </motion.div>
             ))}
           </div>
@@ -354,7 +354,7 @@ export default function AnalyseDesAffairesPage() {
                 <FaArrowRight className="ml-2" />
               </Link>
               <a
-                href="tel:+33123456789"
+                href="tel:+2290162412143"
                 className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/20 transition-all duration-200 text-lg border border-white/30"
               >
                 Appeler Maintenant
