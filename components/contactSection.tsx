@@ -140,8 +140,8 @@ const ContactSection = () => {
                   </motion.div>
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-1">Adresse</h4>
-                    <p className="text-gray-600">Godomey</p>
-                    <p className="text-gray-600">Agbocodji</p>
+                    <p className="text-gray-600">Cotonou</p>
+                    <p className="text-gray-600">Zogbohoue</p>
                   </div>
                 </motion.div>
               </motion.div>

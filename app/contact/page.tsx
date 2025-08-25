@@ -19,7 +19,7 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold">Adresse</h3>
-                  <p className="text-gray-600">Godomey,Agbocodji</p>
+                  <p className="text-gray-600">Cotonou,Zogbohoue</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Téléphone</h3>
