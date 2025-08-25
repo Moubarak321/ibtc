@@ -14,7 +14,7 @@ import Button from "@/components/ui/Button";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import emailjs from 'emailjs-com';
-
+import { sendEmail } from "@/lib/sendmail"; // Import the sendEmail function
 type Features = {
   icon: React.ElementType;
   title: string;
@@ -77,26 +77,20 @@ export default function AnalyseDesAffairesPage() {
     "Accompagnement personnalisé sur 6 mois",
   ];
 
-  const sendEmail = (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!form.current) return;
 
-    if (!form.current) return;
-
-    emailjs.sendForm(
-      'service_1ib6o0n',
-      'template_q05rlxf',
-      form.current,
-      'OlS5NP3Ux2CJSxCJu'
-    ).then(
-      () => {
-        alert('Message envoyé !');
-        form.current?.reset();
-      },
-      (error) => {
-        alert('Erreur : ' + error.text);
-      }
-    );
-  };
+  try {
+    await sendEmail(form.current); // appel à la fonction séparée
+    alert('Message envoyé !');
+    form.current.reset();
+    setShowForm(false);
+    setSelectedFeature(null);
+  } catch (err) {
+    alert("Erreur d'envoi");
+  }
+};
 
   return (
     <main className="min-h-screen">
@@ -254,12 +248,7 @@ export default function AnalyseDesAffairesPage() {
                 <p style={{ marginBottom: 15 }}>{selectedFeature.details}</p>
 
                 {showForm ? (
-                  <form ref={form} onSubmit={(e) => {
-                    e.preventDefault();
-                    sendEmail(e);
-                    setSelectedFeature(null);
-                    setShowForm(false);
-                  }}>
+                  <form ref={form} onSubmit={handleSubmit}>
                     <input type="text" name="name" id="name" placeholder="Votre nom" required style={inputStyle} />
                     <input type="text" name="title" id="title" placeholder="Objet" required style={inputStyle} />
                     {/* <input type="text"  name="company" id="company" placeholder="Votre entreprise" required style={inputStyle} /> */}

@@ -6,7 +6,8 @@ import AnimatedSection from '@/components/ui/AnimatedSection'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { sendEmail } from '@/lib/sendmail';
 
 type Services = {
   icon: React.ElementType;
@@ -56,6 +57,7 @@ const services: Services[] = [
 export default function BTPPage() {
   const [selectedservice, setSelectedservice] = useState<Services | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const form = useRef<HTMLFormElement>(null);
 
   const projects = [
     { name: "Centre Commercial Modern", surface: "15,000 m²", duration: "18 mois" },
@@ -69,6 +71,22 @@ export default function BTPPage() {
     "Certification HQE",
     "Label BBC Effinergie"
   ]
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!form.current) return;
+    
+      try {
+        await sendEmail(form.current); // appel à la fonction séparée
+        alert('Message envoyé !');
+        form.current.reset();
+        setShowForm(false);
+        setSelectedFeature(null);
+      } catch (err) {
+        alert("Erreur d'envoi");
+      }
+    };
 
   return (
     <main className="min-h-screen">
@@ -297,14 +315,7 @@ export default function BTPPage() {
             <p style={{ marginBottom: 15 }}>{selectedservice.details}</p>
 
             {showForm ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert("Demande envoyée !");
-                  setSelectedservice(null);
-                  setShowForm(false);
-                }}
-              >
+              <form ref={form} onSubmit={handleSubmit}>
                 <input
                   type="text"
                   placeholder="Votre nom"
@@ -451,3 +462,7 @@ const confirmBtn = {
   fontWeight: "bold",
   cursor: "pointer",
 };
+function setSelectedFeature(arg0: null) {
+  throw new Error('Function not implemented.');
+}
+

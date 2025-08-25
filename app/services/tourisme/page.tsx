@@ -12,7 +12,8 @@ import {
 import AnimatedSection from "@/components/ui/AnimatedSection";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { sendEmail } from "@/lib/sendmail";
 
 type Service = {
   icon: React.ComponentType<{ className?: string }>;
@@ -56,6 +57,7 @@ const services: Service[] = [
 export default function TourismePage() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const form = useRef<HTMLFormElement>(null);
 
   const destinations = [
     {
@@ -107,6 +109,21 @@ export default function TourismePage() {
     "Activités exclusives",
     "Hébergement 4-5 étoiles",
   ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.current) return;
+  
+    try {
+      await sendEmail(form.current); // appel à la fonction séparée
+      alert('Message envoyé !');
+      form.current.reset();
+      setShowForm(false);
+      setSelectedFeature(null);
+    } catch (err) {
+      alert("Erreur d'envoi");
+    }
+  };
 
   return (
     <main className="min-h-screen">
@@ -264,14 +281,7 @@ export default function TourismePage() {
             <p style={{ marginBottom: 15 }}>{selectedService.details}</p>
 
             {showForm ? (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert("Demande envoyée !");
-                  setSelectedService(null);
-                  setShowForm(false);
-                }}
-              >
+              <form ref={form} onSubmit={handleSubmit}>
                 <input
                   type="text"
                   placeholder="Votre nom"
@@ -548,3 +558,7 @@ const confirmBtn: React.CSSProperties = {
   fontWeight: "bold",
   width: "100%",
 };
+function setSelectedFeature(arg0: null) {
+  throw new Error("Function not implemented.");
+}
+
