@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Phone, Mail, MapPin, Clock, Send, CheckCircle, 
   MessageSquare, Globe, Star, ArrowRight, Zap,
@@ -11,17 +11,22 @@ import {
 import ContactForm from '@/components/ui/ContactForm';
 import Map from '@/components/ui/Map';
 import AnimatedSection from '@/components/ui/AnimatedSection';
+import { sendEmail } from "@/lib/sendmail"; // Import the sendEmail function
+
 
 export default function ContactPage() {
   const [activeContact, setActiveContact] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+   const form = useRef<HTMLFormElement>(null);
+  const [showForm, setShowForm] = useState(false);
+  
 
   const contactMethods = [
     {
       icon: Phone,
       title: "Appelez-nous",
       subtitle: "Disponible 24h/7j",
-      info: "+229 01 94 50 78 44",
+      info: "+229 01 62 41 21 43",
       color: "from-blue-500 to-cyan-500",
       action: "Appeler maintenant"
     },
@@ -33,22 +38,22 @@ export default function ContactPage() {
       color: "from-purple-500 to-pink-500",
       action: "Envoyer un email"
     },
-    {
-      icon: MessageSquare,
-      title: "Chat en direct",
-      subtitle: "Support instantané",
-      info: "Disponible maintenant",
-      color: "from-green-500 to-emerald-500",
-      action: "Démarrer le chat"
-    },
-    {
-      icon: Video,
-      title: "Visioconférence",
-      subtitle: "Rendez-vous virtuel",
-      info: "Sur rendez-vous",
-      color: "from-orange-500 to-red-500",
-      action: "Planifier un appel"
-    }
+    // {
+    //   icon: MessageSquare,
+    //   title: "Chat en direct",
+    //   subtitle: "Support instantané",
+    //   info: "Disponible maintenant",
+    //   color: "from-green-500 to-emerald-500",
+    //   action: "Démarrer le chat"
+    // },
+    // {
+    //   icon: Video,
+    //   title: "Visioconférence",
+    //   subtitle: "Rendez-vous virtuel",
+    //   info: "Sur rendez-vous",
+    //   color: "from-orange-500 to-red-500",
+    //   action: "Planifier un appel"
+    // }
   ];
 
   const offices = [
@@ -117,6 +122,23 @@ export default function ContactPage() {
     return () => clearInterval(timer);
   }, []);
 
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!form.current) return;
+      
+        try {
+          await sendEmail(form.current); // appel à la fonction séparée
+          alert('Message envoyé !');
+          form.current.reset();
+          setShowForm(false);
+        } catch (err) {
+          alert("Erreur d'envoi");
+        }
+      };
+  
+
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section with Gradient Background */}
@@ -152,10 +174,10 @@ export default function ContactPage() {
               <Phone className="w-5 h-5 mr-2" />
               Appeler maintenant
             </button>
-            <button className="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300 flex items-center justify-center">
+            {/* <button className="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transition-all duration-300 flex items-center justify-center">
               <Calendar className="w-5 h-5 mr-2" />
               Planifier un rendez-vous
-            </button>
+            </button> */}
           </div>
 
           {/* Quick Stats */}
@@ -183,7 +205,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-16">
             {contactMethods.map((method, index) => (
               <div
                 key={index}

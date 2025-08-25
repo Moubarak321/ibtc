@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AnimatedSection from '@/components/ui/AnimatedSection';
+import ContactForm from './ui/ContactForm';
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -160,121 +161,7 @@ const ContactSection = () => {
           </AnimatedSection>
           
           {/* Contact Form */}
-          <AnimatedSection>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeInUp}
-              className="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300"
-            >
-              <motion.form 
-                onSubmit={handleSubmit} 
-                className="space-y-6"
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-              >
-                <motion.div variants={formItem} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nom complet *
-                    </label>
-                    <motion.input
-                      whileFocus={{ scale: 1.02 }}
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                      placeholder="Votre nom"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email *
-                    </label>
-                    <motion.input
-                      whileFocus={{ scale: 1.02 }}
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                      placeholder="votre@email.com"
-                    />
-                  </div>
-                </motion.div>
-                
-                <motion.div variants={formItem}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sujet *
-                  </label>
-                  <motion.select
-                    whileFocus={{ scale: 1.02 }}
-                    name="subject"
-                    required
-                    value={formData.subject}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  >
-                    <option value="">Sélectionnez un sujet</option>
-                    <option value="analyse">Analyse des Affaires</option>
-                    <option value="btp">BTP & Construction</option>
-                    <option value="commerce">Commerce Général</option>
-                    <option value="tourisme">Tourisme</option>
-                    <option value="autre">Autre</option>
-                  </motion.select>
-                </motion.div>
-                
-                <motion.div variants={formItem}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message *
-                  </label>
-                  <motion.textarea
-                    whileFocus={{ scale: 1.02 }}
-                    name="message"
-                    required
-                    rows={5}
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
-                    placeholder="Décrivez votre projet..."
-                  ></motion.textarea>
-                </motion.div>
-                
-                <motion.button
-                  variants={formItem}
-                  type="submit"
-                  whileHover={{ 
-                    scale: 1.03,
-                    boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.4)"
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
-                >
-                  Envoyer le message
-                  <motion.span 
-                    className="ml-2"
-                    animate={{
-                      x: [0, 5, 0],
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 1.5,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <Send className="h-5 w-5" />
-                  </motion.span>
-                </motion.button>
-              </motion.form>
-            </motion.div>
-          </AnimatedSection>
+         <ContactForm />
         </div>
       </div>
     </section>

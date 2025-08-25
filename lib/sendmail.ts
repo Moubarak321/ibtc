@@ -5,7 +5,7 @@ export const sendEmail = async (
   form: HTMLFormElement,
   serviceID = 'service_1ib6o0n',
   templateID = 'template_q05rlxf',
-  publicKey = 'VOTRE_PUBLIC_KEY'
+  publicKey = 'OlS5NP3Ux2CJSxCJu'
 ): Promise<void> => {
   try {
     await emailjs.sendForm(serviceID, templateID, form, publicKey);
