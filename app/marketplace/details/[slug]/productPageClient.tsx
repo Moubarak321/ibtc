@@ -404,7 +404,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold">Avis clients</h3>
-                  <div className="flex items-center space-x-2">
+                  {/* <div className="flex items-center space-x-2">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
@@ -412,10 +412,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     </div>
                     <span className="text-lg font-semibold">4.8/5</span>
                     <span className="text-gray-600">(127 avis)</span>
-                  </div>
+                  </div> */}
                 </div>
 
-                <div className="space-y-4">
+                {/* <div className="space-y-4">
                   {[
                     { 
                       name: 'Marc D.', 
@@ -451,7 +451,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                       <p className="text-gray-700">{review.comment}</p>
                     </div>
                   ))}
-                </div>
+                </div> */}
               </div>
             )}
           </div>
