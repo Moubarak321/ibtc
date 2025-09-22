@@ -157,7 +157,7 @@ const ModernCartQuote = () => {
 
   const sendToWhatsApp = () => {
     const message = generateWhatsAppMessage();
-    const phone = '+22990838919'; // Remplace par ton numéro WhatsApp
+    const phone = '+22962412143'; // Remplace par ton numéro WhatsApp
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
