@@ -22,16 +22,35 @@
 //         warranty: { title: '', description: '' }
 //     });
 
+//     const CATEGORIES = [
+//         "Matériaux de structure",
+//         "Matériaux de revêtement",
+//         "Matériaux d'isolation",
+//         "Matériaux de couverture",
+//         "Matériaux de plomberie",
+//         "Matériaux électriques",
+//         "Matériaux de finition",
+//         "Matériaux de menuiserie",
+//         "Matériaux de sécurité",
+//         "Matériaux de décoration",
+//         "Équipements et outillage",
+//         "BTIC Bio Nature"
+//     ].sort();
+
 //     // Controlled input states
 //     const [name, setName] = useState('');
 //     const [productId, setProductId] = useState('');
 //     const [price, setPrice] = useState('');
 //     const [oldPrice, setOldPrice] = useState('');
 //     const [discount, setDiscount] = useState('');
+//     const [promotion, setPromotion] = useState('');
 //     const [category, setCategory] = useState('');
 //     const [brand, setBrand] = useState('');
 //     const [shortDescription, setShortDescription] = useState('');
 //     const [longDescription, setLongDescription] = useState('');
+//     const [inStock, setInStock] = useState(true);
+//     const [vedette, setVedette] = useState(true);
+//     const [fastDelivery, setFastDelivery] = useState(false);
 
 //     // Gestion des images
 //     const handleAddImage = () => setImages([...images, '']);
@@ -39,6 +58,11 @@
 //         const newImages = [...images];
 //         newImages[index] = value;
 //         setImages(newImages);
+//     };
+//     const handleRemoveImage = (index: number) => {
+//         if (images.length > 1) {
+//             setImages(images.filter((_, i) => i !== index));
+//         }
 //     };
 
 //     // Gestion des caractéristiques
@@ -70,6 +94,7 @@
 
 //     const handleSubmit = async (e: React.FormEvent) => {
 //         e.preventDefault();
+
 //         // Validation des images
 //         const validImages = images.filter(img => img.trim() !== '');
 //         if (validImages.length === 0) {
@@ -80,45 +105,33 @@
 //         setIsSubmitting(true);
 
 //         try {
-//             const form = formRef.current;
-//             if (!form) return;
-
-//             const getValue = (selector: string) =>
-//                 (form.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement)?.value.trim();
-
-//             const getSelectValue = (index: number) =>
-//                 (form.querySelectorAll('select')[index] as HTMLSelectElement)?.value === "true";
-
 //             const productData = {
-//                 name: getValue('input[placeholder="Nom"]') || '',
-//                 id: getValue('input[placeholder="ID (ex: bosch-gsb-13-re)"]') || '',
-//                 price: parseFloat(getValue('input[placeholder="0.00"]') || "0"),
-//                 oldPrice: parseFloat((form.querySelectorAll('input[placeholder="0.00"]')[1] as HTMLInputElement)?.value || "0"),
-//                 discount: parseInt(getValue('input[placeholder="25"]') || "0"),
-//                 category: getValue('input[placeholder="Ex: Outillage > Perceuses"]') || '',
-//                 brand: getValue('input[placeholder="Bosch"]') || '',
+//                 name: name.trim(),
+//                 id: productId.trim(),
+//                 price: parseFloat(price) || 0,
+//                 oldPrice: parseFloat(oldPrice) || '',
+//                 discount: parseInt(discount) || 0,
+//                 promotion: promotion.trim(),
+//                 category: category.trim(),
+//                 brand: brand.trim(),
 //                 images: validImages,
-//                 shortDescription: getValue('textarea[placeholder*="Petite description"]') || '',
-//                 longDescription: getValue('textarea[placeholder*="Texte plus détaillé"]') || '',
+//                 shortDescription: shortDescription.trim(),
+//                 longDescription: longDescription.trim(),
 //                 specifications: specs.reduce((acc, { key, value }) => {
 //                     if (key.trim()) acc[key.trim()] = value.trim();
 //                     return acc;
 //                 }, {} as Record<string, string>),
 //                 features: features.filter(f => f.trim() !== ''),
-//                 inStock: getSelectValue(0),
-//                 fastDelivery: getSelectValue(1),
+//                 inStock,
+//                 vedette,
+//                 fastDelivery,
 //                 services,
 //                 updatedAt: new Date(),
 //                 ...(!selectedProduct && { createdAt: new Date() })
 //             };
 
-//             await handleSaveProduct({
-//                 ...productData,
-//                 // Assure que les tableaux ne sont pas undefined
-//                 images: productData.images || [],
-//                 features: productData.features || [],
-//                 specifications: productData.specifications || {}
-//             });
+//             await handleSaveProduct(productData);
+//             setShowProductModal(false);
 //         } catch (error) {
 //             console.error("Erreur lors de la soumission:", error);
 //         } finally {
@@ -129,32 +142,48 @@
 //     // Initialisation des données si produit existant
 //     useEffect(() => {
 //         if (selectedProduct) {
-//             // Initialisation des images - garantit toujours un tableau non vide
+//             setName(selectedProduct.name || '');
+//             setProductId(selectedProduct.id || '');
+//             setPrice(selectedProduct.price?.toString() || '');
+//             setOldPrice(selectedProduct.oldPrice?.toString() || '');
+//             setDiscount(selectedProduct.discount?.toString() || '');
+//             setPromotion(selectedProduct.promotion || '');
+//             setCategory(selectedProduct.category || '');
+//             setBrand(selectedProduct.brand || '');
+//             setShortDescription(selectedProduct.shortDescription || '');
+//             setLongDescription(selectedProduct.longDescription || '');
+//             setInStock(selectedProduct.inStock !== false);
+//             setVedette(selectedProduct.vedette !== false);
+//             setFastDelivery(selectedProduct.fastDelivery === true);
+
+//             // Initialisation des images
 //             setImages(
 //                 selectedProduct.images && selectedProduct.images.length > 0
-//                     ? [...selectedProduct.images] // Copie directe du tableau
-//                     : [''] // Fallback si pas d'images
+//                     ? [...selectedProduct.images]
+//                     : ['']
 //             );
-//             // Initialisation des caractéristiques - filtre les valeurs vides
+//             console.log(images, 'selectedProduct.images');
+
+//             // Initialisation des caractéristiques
 //             setFeatures(
 //                 selectedProduct.features?.filter((f: string) => f.trim() !== '').length > 0
 //                     ? selectedProduct.features.filter((f: string) => f.trim() !== '')
-//                     : [''] // Au moins un champ vide
+//                     : ['']
 //             );
 
-//             // Initialisation des spécifications - conversion depuis l'objet
+//             // Initialisation des spécifications
 //             setSpecs(
 //                 selectedProduct.specifications && Object.keys(selectedProduct.specifications).length > 0
 //                     ? Object.entries(selectedProduct.specifications)
 //                         .filter(([key, value]) => key.trim() !== '' && String(value).trim() !== '')
 //                         .map(([key, value]) => ({
 //                             key,
-//                             value: String(value) // Conversion explicite en string
+//                             value: String(value)
 //                         }))
-//                     : [{ key: '', value: '' }] // Champ vide par défaut
+//                     : [{ key: '', value: '' }]
 //             );
 
-//             // Initialisation des services avec valeurs par défaut propres
+//             // Initialisation des services
 //             setServices({
 //                 delivery: {
 //                     title: selectedProduct.services?.delivery?.title || '',
@@ -166,10 +195,23 @@
 //                 }
 //             });
 //         } else {
-//             // Initialisation pour un nouveau produit
-//             setImages(['']); // Un seul champ image vide
-//             setFeatures(['']); // Un seul champ caractéristique vide
-//             setSpecs([{ key: '', value: '' }]); // Une paire vide
+//             // Réinitialisation pour un nouveau produit
+//             setName('');
+//             setProductId('');
+//             setPrice('');
+//             setOldPrice('');
+//             setDiscount('');
+//             setPromotion('');
+//             setCategory('');
+//             setBrand('');
+//             setShortDescription('');
+//             setLongDescription('');
+//             setInStock(true);
+//             setVedette(true);
+//             setFastDelivery(false);
+//             setImages(['']);
+//             setFeatures(['']);
+//             setSpecs([{ key: '', value: '' }]);
 //             setServices({
 //                 delivery: { title: '', description: '' },
 //                 warranty: { title: '', description: '' }
@@ -198,8 +240,7 @@
 //                     </button>
 //                 </div>
 
-
-//                 <form id="productForm" onSubmit={handleSubmit}>
+//                 <form onSubmit={handleSubmit}>
 //                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 //                         {/* Nom */}
 //                         <div className="space-y-1">
@@ -209,7 +250,8 @@
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                 placeholder="Nom"
 //                                 required
-//                                 value={selectedProduct?.name || ''}
+//                                 value={name}
+//                                 onChange={(e) => setName(e.target.value)}
 //                             />
 //                         </div>
 
@@ -221,11 +263,12 @@
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                 placeholder="ID (ex: bosch-gsb-13-re)"
 //                                 required
-//                                 value={selectedProduct?.id || ''}
+//                                 value={productId}
+//                                 onChange={(e) => setProductId(e.target.value)}
 //                             />
 //                         </div>
 
-//                         {/* Prix & Ancien prix */}
+//                         {/* Prix */}
 //                         <div className="space-y-1">
 //                             <label className="block text-sm font-medium text-gray-700">Prix *</label>
 //                             <div className="relative">
@@ -237,11 +280,13 @@
 //                                     className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                     placeholder="0.00"
 //                                     required
-//                                     value={selectedProduct?.price || ''}
+//                                     value={price}
+//                                     onChange={(e) => setPrice(e.target.value)}
 //                                 />
 //                             </div>
 //                         </div>
 
+//                         {/* Ancien prix */}
 //                         <div className="space-y-1">
 //                             <label className="block text-sm font-medium text-gray-700">Ancien prix</label>
 //                             <div className="relative">
@@ -252,7 +297,8 @@
 //                                     min="0"
 //                                     className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all line-through text-gray-500"
 //                                     placeholder="0.00"
-//                                     value={selectedProduct?.oldPrice || ''}
+//                                     value={oldPrice}
+//                                     onChange={(e) => setOldPrice(e.target.value)}
 //                                 />
 //                             </div>
 //                         </div>
@@ -268,21 +314,41 @@
 //                                     max="100"
 //                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                     placeholder="25"
-//                                     value={selectedProduct?.discount || ''}
+//                                     value={discount}
+//                                     onChange={(e) => setDiscount(e.target.value)}
 //                                 />
 //                             </div>
+//                         </div>
+
+//                         {/* Promotion - NOUVEAU CHAMP */}
+//                         <div className="space-y-1">
+//                             <label className="block text-sm font-medium text-gray-700">Promotion</label>
+//                             <input
+//                                 type="text"
+//                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+//                                 placeholder="ex: 5000 à partir de 3"
+//                                 value={promotion}
+//                                 onChange={(e) => setPromotion(e.target.value)}
+//                             />
+//                             <p className="text-xs text-gray-500">Texte personnalisé pour les offres spéciales</p>
 //                         </div>
 
 //                         {/* Catégorie */}
 //                         <div className="space-y-1">
 //                             <label className="block text-sm font-medium text-gray-700">Catégorie *</label>
-//                             <input
-//                                 type="text"
+//                             <select
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-//                                 placeholder="Ex: Outillage > Perceuses"
 //                                 required
-//                                 value={selectedProduct?.category || ''}
-//                             />
+//                                 value={category}
+//                                 onChange={(e) => setCategory(e.target.value)}
+//                             >
+//                                 <option value="">Sélectionnez une catégorie</option>
+//                                 {CATEGORIES.map((cat) => (
+//                                     <option key={cat} value={cat}>
+//                                         {cat}
+//                                     </option>
+//                                 ))}
+//                             </select>
 //                         </div>
 
 //                         {/* Marque */}
@@ -292,58 +358,74 @@
 //                                 type="text"
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                 placeholder="Bosch"
-//                                 value={selectedProduct?.brand || ''}
+//                                 value={brand}
+//                                 onChange={(e) => setBrand(e.target.value)}
 //                             />
 //                         </div>
 
-//                         {/* stock */}
+//                         {/* Stock */}
 //                         <div className="space-y-1">
 //                             <label className="block text-sm font-medium text-gray-700">Stock</label>
-
 //                             <select
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-//                                 value={selectedProduct?.inStock ? 'true' : 'false'}
+//                                 value={inStock ? 'true' : 'false'}
+//                                 onChange={(e) => setInStock(e.target.value === 'true')}
 //                             >
 //                                 <option value="true">En stock</option>
 //                                 <option value="false">En rupture</option>
 //                             </select>
 //                         </div>
 
-//                         {/* livraison */}
+//                         {/* vedette */}
 //                         <div className="space-y-1">
-//                             <label className="block text-sm font-medium text-gray-700">Livraison</label>
-
+//                             <label className="block text-sm font-medium text-gray-700">Vedette</label>
 //                             <select
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-//                                 value={selectedProduct?.fastDelivery ? 'true' : 'false'}
+//                                 value={vedette ? 'true' : 'false'}
+//                                 onChange={(e) => setVedette(e.target.value === 'true')}
+//                             >
+//                                 <option value="true">Oui</option>
+//                                 <option value="false">Non</option>
+//                             </select>
+//                         </div>
+
+//                         {/* Livraison */}
+//                         <div className="space-y-1">
+//                             <label className="block text-sm font-medium text-gray-700">Livraison</label>
+//                             <select
+//                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+//                                 value={fastDelivery ? 'true' : 'false'}
+//                                 onChange={(e) => setFastDelivery(e.target.value === 'true')}
 //                             >
 //                                 <option value="true">Livraison rapide</option>
 //                                 <option value="false">Livraison standard</option>
 //                             </select>
 //                         </div>
 
-
-
+//                         {/* Courte description */}
 //                         <div className="space-y-1">
 //                             <label className="block text-sm font-medium text-gray-700">Courte description *</label>
 //                             <textarea
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                 placeholder="Petite description qui apparaît dans les listes"
-//                                 value={selectedProduct?.shortDescription || ''}
+//                                 value={shortDescription}
+//                                 onChange={(e) => setShortDescription(e.target.value)}
 //                             />
 //                         </div>
 
+//                         {/* Longue description */}
 //                         <div className="space-y-1">
 //                             <label className="block text-sm font-medium text-gray-700">Longue description *</label>
 //                             <textarea
 //                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
 //                                 placeholder="Texte plus détaillé pour la page produit"
 //                                 rows={4}
-//                                 value={selectedProduct?.longDescription || ''}
+//                                 value={longDescription}
+//                                 onChange={(e) => setLongDescription(e.target.value)}
 //                             />
 //                         </div>
 
-//                         {/* Images - Nouvelle interface */}
+//                         {/* Images */}
 //                         <div className="col-span-2 space-y-2">
 //                             <label className="block text-sm font-medium text-gray-700">
 //                                 Images *
@@ -366,7 +448,7 @@
 //                                     {images.length > 1 && (
 //                                         <button
 //                                             type="button"
-//                                             onClick={() => setImages(images.filter((_, i) => i !== index))}
+//                                             onClick={() => handleRemoveImage(index)}
 //                                             className="px-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200"
 //                                         >
 //                                             -
@@ -385,7 +467,7 @@
 //                             ))}
 //                         </div>
 
-//                         {/* Caractéristiques - Nouvelle interface */}
+//                         {/* Caractéristiques */}
 //                         <div className="col-span-2 space-y-2">
 //                             <label className="block text-sm font-medium text-gray-700">Fonctionnalités</label>
 //                             {features.map((feature, index) => (
@@ -410,7 +492,7 @@
 //                             ))}
 //                         </div>
 
-//                         {/* Spécifications - Nouvelle interface */}
+//                         {/* Spécifications */}
 //                         <div className="col-span-2 space-y-2">
 //                             <label className="block text-sm font-medium text-gray-700">Spécifications techniques</label>
 //                             {specs.map((spec, index) => (
@@ -444,7 +526,7 @@
 //                             ))}
 //                         </div>
 
-//                         {/* Services - Nouvelle interface */}
+//                         {/* Services */}
 //                         <div className="col-span-2 space-y-4">
 //                             <div>
 //                                 <label className="block text-sm font-medium text-gray-700 mb-2">Service de livraison</label>
@@ -487,8 +569,8 @@
 //                             </div>
 //                         </div>
 
-//                         {/* ... (boutons identiques) ... */}
-//                         <div className="flex flex-col sm:flex-row gap-3 mt-8">
+//                         {/* Boutons */}
+//                         <div className="col-span-2 flex flex-col sm:flex-row gap-3 mt-8">
 //                             <button
 //                                 type="button"
 //                                 onClick={() => setShowProductModal(false)}
@@ -525,10 +607,6 @@
 // };
 
 // export default ProductModal;
-
-
-
-
 
 "use client";
 import React, { useRef, useEffect, useState } from 'react';
@@ -575,6 +653,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     const [price, setPrice] = useState('');
     const [oldPrice, setOldPrice] = useState('');
     const [discount, setDiscount] = useState('');
+    const [promotion, setPromotion] = useState(''); // Nouveau champ promotion
     const [category, setCategory] = useState('');
     const [brand, setBrand] = useState('');
     const [shortDescription, setShortDescription] = useState('');
@@ -642,6 +721,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 price: parseFloat(price) || 0,
                 oldPrice: parseFloat(oldPrice) || '',
                 discount: parseInt(discount) || 0,
+                promotion: promotion.trim(), // Ajout de la promotion
                 category: category.trim(),
                 brand: brand.trim(),
                 images: validImages,
@@ -677,6 +757,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             setPrice(selectedProduct.price?.toString() || '');
             setOldPrice(selectedProduct.oldPrice?.toString() || '');
             setDiscount(selectedProduct.discount?.toString() || '');
+            setPromotion(selectedProduct.promotion || ''); // Initialisation de la promotion
             setCategory(selectedProduct.category || '');
             setBrand(selectedProduct.brand || '');
             setShortDescription(selectedProduct.shortDescription || '');
@@ -730,6 +811,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             setPrice('');
             setOldPrice('');
             setDiscount('');
+            setPromotion(''); // Réinitialisation de la promotion
             setCategory('');
             setBrand('');
             setShortDescription('');
@@ -846,6 +928,19 @@ const ProductModal: React.FC<ProductModalProps> = ({
                                     onChange={(e) => setDiscount(e.target.value)}
                                 />
                             </div>
+                        </div>
+
+                        {/* Promotion - NOUVEAU CHAMP */}
+                        <div className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700">Promotion</label>
+                            <input
+                                type="text"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                placeholder="ex: 5000 à partir de 3"
+                                value={promotion}
+                                onChange={(e) => setPromotion(e.target.value)}
+                            />
+                            <p className="text-xs text-gray-500">Texte personnalisé pour les offres spéciales</p>
                         </div>
 
                         {/* Catégorie */}

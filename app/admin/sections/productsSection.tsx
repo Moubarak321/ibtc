@@ -106,6 +106,7 @@ const ProductsSection = () => {
         price: number;
         oldPrice?: number;
         discount?: number;
+        promotion?:string;
         category: string;
         brand?: string;
         images: string[];
@@ -150,6 +151,7 @@ const ProductsSection = () => {
                 price: Number(productData.price),
                 oldPrice: productData.oldPrice ? Number(productData.oldPrice) : '',
                 discount: productData.discount ? Number(productData.discount) : 0,
+                promotion:productData.promotion ? productData.promotion.trim() : '',
                 category: productData.category.trim(),
                 brand: productData.brand?.trim() || '',
                 images: validImages,

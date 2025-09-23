@@ -286,7 +286,7 @@ const ModernCartQuote = () => {
                     <p className="text-gray-600 text-sm mb-2">{item.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-purple-600">
-                        {item.price.toFixed(2)} €
+                        {item.price.toFixed(2)} FCFA
                       </span>
 
                       <div className="flex items-center gap-3">
@@ -338,7 +338,7 @@ const ModernCartQuote = () => {
                       {item.name} x{item.quantity}
                     </span>
                     <span className="text-gray-800 font-medium">
-                      {(item.price * item.quantity).toFixed(2)} €
+                      {(item.price * item.quantity).toFixed(2)} FCFA
                     </span>
                   </div>
                 ))}
@@ -346,7 +346,7 @@ const ModernCartQuote = () => {
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-gray-800">Total estimé</span>
-                    <span className="text-purple-600">{getTotalPrice().toFixed(2)} €</span>
+                    <span className="text-purple-600">{getTotalPrice().toFixed(2)} FCFA</span>
                   </div>
                 </div>
               </div>

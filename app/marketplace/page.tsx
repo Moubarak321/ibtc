@@ -11,6 +11,7 @@ interface Product {
     name: string;
     subcategory: string;
     category: string;
+    promotion: string
     brand?: string;
     shortDescription?: string;
     price: number;
@@ -93,6 +94,7 @@ const MarketplacePage = () => {
                     id: doc.id,
                     name: doc.data().name || '',
                     category: doc.data().category || '',
+                    promotion: doc.data().promotion || '',
                     subcategory: doc.data().subcategory || '',
                     price: doc.data().price || 0,
                     oldPrice: doc.data().oldPrice || '',
@@ -332,6 +334,7 @@ const MarketplacePage = () => {
         name: string;
         category: string;
         subcategory: string;
+        promotion: string;
         price: number;
         oldPrice?: number;
         images: string[];
@@ -364,11 +367,19 @@ const MarketplacePage = () => {
                 {/* Badges - Responsive */}
                 <div className="absolute top-2 left-2 lg:top-3 lg:left-3 flex flex-col gap-1 lg:gap-2" >
                     {
-                        product.vedette && (
-                            <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold animate-pulse flex items-center gap-1">
-                                ⭐ < span className="hidden sm:inline" > Vedette </span>
+                        product.promotion && product.promotion.trim() !== '' && (
+                            <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold animate-pulse flex items-center gap-1">
+                                🎉 {product.promotion}
                             </span>
-                        )}
+                        )
+                    }
+                    {
+                        product.vedette && (
+                            <span className="bg-black text-white px-2 py-1 rounded-full text-xs font-semibold animate-pulse flex items-center gap-1">
+                                ⭐ <span className="hidden sm:inline">Vedette</span>
+                            </span>
+                        )
+                    }
                     {
                         product.oldPrice && (
                             <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold" >
@@ -376,6 +387,7 @@ const MarketplacePage = () => {
                             </span>
                         )
                     }
+
                     {
                         !product.inStock && (
                             <span className="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-semibold" >

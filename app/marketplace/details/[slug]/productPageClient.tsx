@@ -28,6 +28,7 @@ interface Product {
   oldPrice?: number;
   discount?: number;
   category: string;
+  promotion:string;
   brand?: string;
   images: string[];
   shortDescription?: string;
@@ -335,14 +336,15 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 </p>
               )}
 
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                  <span className="ml-2 text-sm text-gray-600">(127 avis)</span>
-                </div>
-              </div>
+              {product.promotion && (
+    <div className="flex items-center space-x-4 mb-6">
+        <div className="flex items-center">
+            <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold animate-pulse flex items-center gap-1">
+                🎉 {product.promotion}
+            </span>
+        </div>
+    </div>
+)}
             </div>
 
             {/* Price and Purchase Section */}

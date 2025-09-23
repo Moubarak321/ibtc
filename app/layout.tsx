@@ -7,7 +7,7 @@ import Header from '@/components/navigation/header';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Multi-Services Enterprise',
+  title: 'International Business and Tourism Company',
   description: 'Professional multi-service company offering business analysis, construction, general trade, and tourism services',
   keywords: 'business analysis, construction, general trade, tourism, multi-service company',
   authors: [{ name: 'BTIC' }],
