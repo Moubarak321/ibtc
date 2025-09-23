@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Package, TrendingUp, Star, Filter, Calendar, Download, Eye, Edit, Search, X, User, MapPin, Phone, Mail, MessageCircle, Loader2, CheckCircle, Clock, Truck, AlertCircle, ChevronRight, ChevronsRight, ChevronLeft, ChevronsLeft } from 'lucide-react';
+import { ShoppingCart, Package, TrendingUp, Star, Filter, Calendar, Download, Eye, Edit, Search, X, User, MapPin, Phone, Mail, MessageCircle, Loader2, CheckCircle, Clock, Truck, AlertCircle, ChevronRight, ChevronsRight, ChevronLeft, ChevronsLeft ,CreditCard, PersonStanding} from 'lucide-react';
 import { collection, getDocs, doc, updateDoc, query, orderBy, where, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase/client-config'; // Ajustez le chemin selon votre configuration
 
@@ -12,14 +12,16 @@ interface CartItem {
 }
 
 interface Customer {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    address: string;
-    city: string;
-    postalCode: string;
+          
+    lastName: string,
+    firstName: string,
+    email: string,
+    phone: string,
+    deliveryAddress: string,
+    deliveryDeadline: string,
+    paymentMethod: string,
     message?: string;
+
 }
 
 interface Order {
@@ -474,6 +476,7 @@ const OrdersSection = () => {
                                 </h4>
                                 <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                                     <div className="flex items-center gap-2">
+                                        <User className="w-4 h-4 text-gray-500" />
                                         <strong>Nom:</strong> {selectedOrder.customer.firstName} {selectedOrder.customer.lastName}
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -485,8 +488,16 @@ const OrdersSection = () => {
                                         <strong>Téléphone:</strong> {selectedOrder.customer.phone}
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-gray-500" />
-                                        <strong>Adresse:</strong> {selectedOrder.customer.address}, {selectedOrder.customer.city} {selectedOrder.customer.postalCode}
+                                        <MapPin className="w-4 h-4 text-gray-500" />  
+                                        <strong>Adresse de livraison:</strong> {selectedOrder.customer.deliveryAddress} 
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-gray-500" />
+                                        <strong>Delai de livraison:</strong> {selectedOrder.customer.deliveryDeadline}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <CreditCard className="w-4 h-4 text-gray-500" />
+                                        <strong>Mode de paiement:</strong> {selectedOrder.customer.paymentMethod}
                                     </div>
                                     {selectedOrder.customer.message && (
                                         <div className="flex items-start gap-2">

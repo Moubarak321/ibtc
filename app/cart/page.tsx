@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Plus, Minus, Trash2, ShoppingCart, FileText, User, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Plus, Minus, Trash2, ShoppingCart, FileText, User, Mail, Phone, MapPin, Send, CheckCircle,Clock,CreditCard } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { getFirestore, collection, addDoc, Timestamp } from 'firebase/firestore';
 import { app } from '@/lib/firebase/client-config';
@@ -15,45 +15,20 @@ interface ProductCartItem {
 }
 
 const ModernCartQuote = () => {
-  // const [cartItems, setCartItems] = useState([
-  //   {
-  //     id: 1,
-  //     name: "Service de Nettoyage Premium",
-  //     description: "Nettoyage complet de votre domicile",
-  //     price: 89.99,
-  //     quantity: 1,
-  //     image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop"
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Réparation Électronique",
-  //     description: "Diagnostic et réparation d'appareils",
-  //     price: 45.50,
-  //     quantity: 2,
-  //     image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300&h=200&fit=crop"
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Cours Particuliers",
-  //     description: "Cours de mathématiques niveau lycée",
-  //     price: 35.00,
-  //     quantity: 1,
-  //     image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=300&h=200&fit=crop"
-  //   }
-  // ]);
+
 
   const [cartItems, setCartItems] = useState<ProductCartItem[]>([]);
 
 
   const [showQuoteForm, setShowQuoteForm] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
     lastName: '',
+    firstName: '',
     email: '',
     phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
+    deliveryAddress: '',
+    deliveryDeadline: '',
+    paymentMethod: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +48,14 @@ const ModernCartQuote = () => {
     }
   }, []);
 
-
+  const paymentMethods = [
+    { value: '', label: 'Sélectionner un moyen de paiement' },
+    { value: 'mobile_money', label: 'Mobile Money (MTN/Moov)' },
+    { value: 'bank_transfer', label: 'Virement bancaire' },
+    { value: 'cash', label: 'Espèces à la livraison' },
+    { value: 'cheque', label: 'Chèque' },
+    { value: 'card', label: 'Carte bancaire' }
+  ];
 
   const updateQuantity = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -115,6 +97,20 @@ const ModernCartQuote = () => {
     });
   };
 
+  // const generateWhatsAppMessage = () => {
+  //   if (cartItems.length === 0) return '';
+
+  //   let message = 'Bonjour, je souhaite commander les articles suivants :\n\n';
+
+  //   cartItems.forEach(item => {
+  //     message += `- ${item.name} x${item.quantity} → ${(item.price * item.quantity).toFixed(2)} FCFA\n`;
+  //   });
+
+  //   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  //   message += `\nTotal : ${total.toFixed(2)} FCFA`;
+
+  //   return message;
+  // };
   const generateWhatsAppMessage = () => {
     if (cartItems.length === 0) return '';
 
@@ -126,6 +122,17 @@ const ModernCartQuote = () => {
 
     const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     message += `\nTotal : ${total.toFixed(2)} FCFA`;
+
+    if (formData.lastName) {
+      message += `\n\nInformations client :\n`;
+      message += `Nom : ${formData.lastName}\n`;
+      message += `Prénoms : ${formData.firstName}\n`;
+      message += `Email : ${formData.email}\n`;
+      message += `Téléphone : ${formData.phone}\n`;
+      message += `Adresse de livraison : ${formData.deliveryAddress}\n`;
+      message += `Délai de livraison : ${formData.deliveryDeadline}\n`;
+      message += `Moyen de paiement : ${paymentMethods.find(p => p.value === formData.paymentMethod)?.label || formData.paymentMethod}\n`;
+    }
 
     return message;
   };
@@ -219,13 +226,13 @@ const ModernCartQuote = () => {
         setIsSuccess(false);
         setShowQuoteForm(false);
         setFormData({
-          firstName: '',
           lastName: '',
+          firstName: '',
           email: '',
           phone: '',
-          address: '',
-          city: '',
-          postalCode: '',
+          deliveryAddress: '',
+          deliveryDeadline: '',
+          paymentMethod: '',
           message: ''
         });
       }, 3000);
@@ -377,102 +384,151 @@ const ModernCartQuote = () => {
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 animate-fade-in">
                 <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                   <User className="w-5 h-5 text-purple-500" />
-                  Vos Coordonnées
+                  Informations de Commande
                 </h2>
 
                 {isSuccess ? (
                   <div className="text-center py-8">
                     <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">Demande envoyée !</h3>
-                    <p className="text-gray-600">Vous recevrez votre devis sous 24h</p>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Commande envoyée !</h3>
+                    <p className="text-gray-600">Nous vous contacterons sous 24h</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <input
-                          type="text"
-                          name="firstName"
-                          placeholder="Prénom"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="lastName"
-                          placeholder="Nom"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        name="phone"
-                        placeholder="Téléphone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
+                    {/* Nom */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Nom <span className="text-red-500">*</span>
+                      </label>
                       <input
                         type="text"
-                        name="address"
-                        placeholder="Adresse"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        name="city"
-                        placeholder="Ville"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                      />
-                      <input
-                        type="text"
-                        name="postalCode"
-                        placeholder="Code postal"
-                        value={formData.postalCode}
+                        name="lastName"
+                        placeholder="Votre nom de famille"
+                        value={formData.lastName}
                         onChange={handleInputChange}
                         required
                         className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                       />
                     </div>
 
+                    {/* Prénoms */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Prénoms <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        placeholder="Vos prénoms"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      />
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="email"
+                          name="email"
+                          placeholder="votre.email@exemple.com"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Téléphone */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Téléphone <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="tel"
+                          name="phone"
+                          placeholder="+229 XX XX XX XX"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Adresse de livraison */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Adresse de livraison <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-4 w-5 h-5 text-gray-400" />
+                        <textarea
+                          name="deliveryAddress"
+                          placeholder="Adresse complète de livraison"
+                          value={formData.deliveryAddress}
+                          onChange={handleInputChange}
+                          required
+                          rows={2}
+                          className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Délai de livraison */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Délai de livraison souhaité
+                      </label>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="text"
+                          name="deliveryDeadline"
+                          placeholder="Ex: Dans 2 semaines, Urgent, Fin du mois..."
+                          value={formData.deliveryDeadline}
+                          onChange={handleInputChange}
+                          className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Moyen de paiement */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Moyen de paiement <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <select
+                          name="paymentMethod"
+                          value={formData.paymentMethod}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-12 pr-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all appearance-none cursor-pointer"
+                        >
+                          {paymentMethods.map(method => (
+                            <option key={method.value} value={method.value}>
+                              {method.label}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
                     <textarea
                       name="message"
                       placeholder="Message (optionnel)"
@@ -482,7 +538,7 @@ const ModernCartQuote = () => {
                       className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
                     ></textarea>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 pt-4">
                       <button
                         type="button"
                         onClick={() => setShowQuoteForm(false)}
@@ -504,7 +560,7 @@ const ModernCartQuote = () => {
                         ) : (
                           <>
                             <Send className="w-5 h-5" />
-                            Envoyer
+                            Commander
                           </>
                         )}
                       </button>
@@ -538,3 +594,5 @@ const ModernCartQuote = () => {
 };
 
 export default ModernCartQuote;
+
+
